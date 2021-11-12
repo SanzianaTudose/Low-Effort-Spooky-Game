@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class NPCMovement : MonoBehaviour
 {
-    [SerializeField] private Vector2 moveSpeedRange = new Vector2(1.5f, 2f);
+    [SerializeField] private Vector2 moveSpeedRange = new Vector2(1f, 2f);
     [SerializeField] private Vector2 decisionTimeRange = new Vector2(2f, 4f);
     [SerializeField] private Vector2 waitTimeRange = new Vector2(1f, 2f);
     [SerializeField] private float waitProbability = 0.2f;
