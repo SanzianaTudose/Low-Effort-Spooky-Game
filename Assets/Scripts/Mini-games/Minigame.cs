@@ -37,4 +37,8 @@ public class Minigame : MonoBehaviour
 
         minigameContainer.SetActive(true);
     }
+
+    public virtual void EndGame() {
+        minigameContainer.SetActive(false);
+    }
 }

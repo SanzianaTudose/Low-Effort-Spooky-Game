@@ -12,6 +12,7 @@ using UnityEngine.EventSystems;
 */
 public class AimClickGameManager : Minigame
 {
+    [SerializeField] private GameObject playingContainer;
     [SerializeField] private GameObject circlePrefab;
     [SerializeField] private List<Sprite> spriteList; 
 
@@ -38,7 +39,6 @@ public class AimClickGameManager : Minigame
         CalculateSpawnBounds();
 
         SpawnCircles();
-        minigameContainer.SetActive(true);
 
         circlesClicked = 0;
         minigameRunning = true;
@@ -46,7 +46,7 @@ public class AimClickGameManager : Minigame
     }
    
     private void CalculateSpawnBounds() {
-        RectTransform containerRect = minigameContainer.GetComponent<RectTransform>();
+        RectTransform containerRect = playingContainer.GetComponent<RectTransform>();
         RectTransform circleRect = circlePrefab.GetComponent<RectTransform>();
         if (containerRect == null)
             Debug.LogError("AimClickGameManager: RectTransform component could not be found on {aimClickContainer}.");
@@ -67,7 +67,7 @@ public class AimClickGameManager : Minigame
         circleCount = Mathf.FloorToInt(Random.Range(circleCountRange.x, circleCountRange.y));
 
         for (int i = 1; i <= circleCount; i++) {
-            GameObject circle = Instantiate(circlePrefab, minigameContainer.transform);
+            GameObject circle = Instantiate(circlePrefab, playingContainer.transform);
             SetUpCircleProperties(circle);
         }
     }

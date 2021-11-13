@@ -9,6 +9,7 @@ public class MinigameController : MonoBehaviour
     [SerializeField] GameObject introUI;
     [SerializeField] public TextMeshProUGUI countdownText;
     [SerializeField] Minigame minigameManager;
+    [SerializeField] private GameObject overlayPanel;
 
     [Header("Properties")]
     [SerializeField] private int countdownTime = 3;
@@ -29,6 +30,7 @@ public class MinigameController : MonoBehaviour
                 countdownTimeRemaining -= Time.deltaTime;
             else {
                 countdownRunning = false;
+                introUI.SetActive(false);
                 // Termination: Initiate minigame
                 minigameManager.StartGame();
             }
@@ -43,6 +45,7 @@ public class MinigameController : MonoBehaviour
         // Show introduction
         // Display explanation text + countdown
         introUI.SetActive(true);
+        overlayPanel.SetActive(true);
 
         // Initiate the countdown
         countdownTimeRemaining = countdownTime;
