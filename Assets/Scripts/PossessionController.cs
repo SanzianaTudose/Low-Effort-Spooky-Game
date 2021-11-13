@@ -109,6 +109,7 @@ public class PossessionController : MonoBehaviour
 
                 highlightClosest.GetComponent<NPCMovement>().enabled = false;
 
+                highlightClosest.GetComponent<BoxCollider2D>().enabled = false;
                 gameObject.transform.position = highlightClosest.gameObject.transform.position;
 
                 /*
@@ -146,11 +147,18 @@ public class PossessionController : MonoBehaviour
             
             possessing = false;
 
+            // change the position to a random place
             lastPossessed.transform.position = gameObject.transform.position;
+
+            lastPossessed.GetComponent<BoxCollider2D>().enabled = true;
+
+            lastPossessed.GetComponent<NPCMovement>().enabled = true;
 
             lastPossessed.GetComponent<SpriteRenderer>().enabled = true;
 
             gameObject.GetComponent<SpriteRenderer>().sprite = defaultSprite;
+
+
             
             if (ableToPosses) {
                 highlightClosest.transform.GetChild(0).GetComponent<SpriteRenderer>().enabled = true;
