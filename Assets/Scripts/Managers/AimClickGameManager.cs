@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 using UnityEngine.EventSystems;
 
 /* Handles everything related to the Circle Click Mini-game - should be attached to the AimClickContainer
@@ -11,24 +12,56 @@ using UnityEngine.EventSystems;
 */
 public class AimClickGameManager : MonoBehaviour
 {
+    [SerializeField] private TMP_Text timeText;
     [SerializeField] private GameObject circlePrefab;
 
     [Header("Game Properties")]
     [SerializeField] private Vector2Int circleCountRange = new Vector2Int(3, 6);
     [SerializeField] private Vector2 circleScaleRange = new Vector2(0.5f, 1f);
-    
+    [SerializeField] private float timeLimit = 5f;
+
     private GameObject aimClickContainer;
     private Vector2 spawnBoundsX, spawnBoundsY;
 
     private int circleCount;
+    private int circlesClicked = 0;
+    private float timeRemaining = 0;
+    private bool minigameRunning = false;
 
-    void Start() {
+    private void Start() {
         aimClickContainer = gameObject;
         CalculateSpawnBounds();
-
-        SpawnCircles();
     }
 
+    private void Update() {
+        // Handle player input
+        if (Input.GetKeyDown(KeyCode.Q) && !minigameRunning)
+            StartGame();
+
+        // Handle time
+        if (minigameRunning && timeRemaining > 0) 
+            timeRemaining -= Time.deltaTime;
+
+        HandleGameStates();
+
+        // Update UI
+        if (minigameRunning) {
+            float seconds = Mathf.FloorToInt(timeRemaining % 60);
+            float microseconds = Mathf.FloorToInt(timeRemaining * 100) % 100;
+            string textString = string.Format("{0:00}.{1:00}", seconds, microseconds);
+            timeText.text = textString;
+        }
+    }
+
+    #region Initialization
+    private void StartGame() {
+        SpawnCircles();
+
+        circlesClicked = 0;
+        minigameRunning = true;
+        timeRemaining = timeLimit;
+    }
+   
     private void CalculateSpawnBounds() {
         RectTransform containerRect = aimClickContainer.GetComponent<RectTransform>();
         RectTransform circleRect = circlePrefab.GetComponent<RectTransform>();
@@ -41,6 +74,7 @@ public class AimClickGameManager : MonoBehaviour
         Vector2 containerSize = new Vector2(containerRect.rect.width, containerRect.rect.height);
         Vector2 circleSize = new Vector2(circleRect.rect.width, circleRect.rect.height);
 
+        // Set bounds related to container and circle prefab size
         spawnBoundsX = new Vector2((-containerSize.x + circleSize.x) / 2.0f, (containerSize.x - circleSize.x) / 2.0f);
         spawnBoundsY = new Vector2((-containerSize.y + circleSize.y) / 2.0f, (containerSize.y - circleSize.y) / 2.0f);
     }
@@ -79,9 +113,26 @@ public class AimClickGameManager : MonoBehaviour
         // Set up scale 
         circleRect.localScale = circleRect.localScale * Random.Range(circleScaleRange.x, circleScaleRange.y);
     }
+    #endregion
+
+    private void HandleGameStates() {
+        // Handle FAIL state
+        if (minigameRunning && timeRemaining <= 0) {
+            minigameRunning = false;
+            print("fail");
+        }
+
+        // Handle WIN state
+        if (minigameRunning && timeRemaining > 0 && circlesClicked == circleCount) {
+            minigameRunning = false;
+            print("win");
+        }
+    }
 
     // Referenced by the Event Trigger component on Button Image
     public void OnButtonClick(GameObject curCircle) {
+        circlesClicked++;
+
         Destroy(curCircle);
     }
 
