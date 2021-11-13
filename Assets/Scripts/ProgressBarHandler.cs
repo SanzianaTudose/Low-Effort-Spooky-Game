@@ -26,20 +26,20 @@ public class ProgressBarHandler : MonoBehaviour
 
     public GameObject titleScroll;
 
-    // Canvas groups for different screens (stands for name-User-Interface-Canvas-Group)
+    // Canvas groups for different screens, used to hide and show game screens
     public GameObject generalUICG; // Remains on screen during the entire game
     public GameObject introUICG;
     public GameObject gameUICG;
     public GameObject endUICG;
 
-    private int clicks_remaining;
-    private float time_remaining;
-    private float countdown_time_remaining;
-    private bool minigame_running = false;
-    private bool countdown_running = false;
+    private int clicksRemaining;
+    private float timeRemaining;
+    private float countdownTimeRemaining;
+    private bool minigameRunning = false;
+    private bool countdownRunning = false;
     private Vector3 initialButtonImagePos;
 
-    // Start is called before the first frame update
+
     void Start()
     {
         // Initialize variables
@@ -52,40 +52,40 @@ public class ProgressBarHandler : MonoBehaviour
 
         progressBarContainer.SetActive(false);
 
-        startIntro();
+        StartIntro();
     }
 
-    // Update is called once per frame
+
     void Update()
     {
         // Handle countdown timer
-        if (countdown_running && countdown_time_remaining > 0)
+        if (countdownRunning && countdownTimeRemaining > 0)
         {
-            countdown_time_remaining -= Time.deltaTime;
-            if (countdown_time_remaining > 0)
+            countdownTimeRemaining -= Time.deltaTime;
+            if (countdownTimeRemaining > 0)
             {
                 // Update text
-                countdownText.text = Mathf.FloorToInt(countdown_time_remaining + 1 % 60).ToString();
+                countdownText.text = Mathf.FloorToInt(countdownTimeRemaining + 1 % 60).ToString();
             }
             else
             {
                 // Termination: Initiate minigame
-                startMinigame();
+                StartMinigame();
             }
         }
 
         // Handle minigame whilest time is remaining and the game is running
-        if (minigame_running && time_remaining > 0)
+        if (minigameRunning && timeRemaining > 0)
         {
             // Deal with time
-            time_remaining -= Time.deltaTime;
+            timeRemaining -= Time.deltaTime;
 
             // Only update text and handle keypresses if the time remaining is still larger than 0 after this step
-            if (time_remaining > 0)
+            if (timeRemaining > 0)
             {
                 // Update time text
-                float seconds = Mathf.FloorToInt(time_remaining % 60);
-                float microseconds = Mathf.FloorToInt(time_remaining * 100) % 100;
+                float seconds = Mathf.FloorToInt(timeRemaining % 60);
+                float microseconds = Mathf.FloorToInt(timeRemaining * 100) % 100;
                 string textString = string.Format("{0:00}.{1:00}", seconds, microseconds);
                 timeText.text = textString;
 
@@ -109,24 +109,25 @@ public class ProgressBarHandler : MonoBehaviour
                 // Deal with key presses
                 if (Input.GetKeyDown("x"))
                 {
-                    progress.transform.localScale += new Vector3(0f, (float)1 / clicks, 0f);
-                    clicks_remaining--;
+                    Debug.Log("You pressed the button!");
+                    progress.transform.localScale += new Vector3(0f, (float) 1 / clicks, 0f);
+                    clicksRemaining--;
 
                     // TODO: Add scale bump to button on press
 
                     // Minigame termination by winning
-                    if (clicks_remaining == 0)
+                    if (clicksRemaining == 0)
                     {
-                        StartCoroutine(endMinigame(true));
+                        StartCoroutine(EndMinigame(true));
                     }
                 }
             }
         }
 
         // Timer termination
-        if (minigame_running && time_remaining <= 0)
+        if (minigameRunning && timeRemaining <= 0)
         {
-           StartCoroutine(endMinigame(false));
+           StartCoroutine(EndMinigame(false));
         }
     }
 
@@ -137,7 +138,7 @@ public class ProgressBarHandler : MonoBehaviour
         return Mathf.Round(value * mult) / mult;
     }
 
-    public void startIntro()
+    public void StartIntro()
     {
         Debug.Log("Minigame starting...");
         progress.transform.localScale = new Vector3(1f, 0f, 1f); // Reset progress bar
@@ -150,12 +151,12 @@ public class ProgressBarHandler : MonoBehaviour
         endUICG.GetComponent<CanvasGroup>().alpha = 0f;
 
         // Initiate the countdown
-        countdown_time_remaining = countdownTime;
-        countdownText.text = Mathf.FloorToInt(countdown_time_remaining % 60).ToString();
-        countdown_running = true;
+        countdownTimeRemaining = countdownTime;
+        countdownText.text = Mathf.FloorToInt(countdownTimeRemaining % 60).ToString();
+        countdownRunning = true;
     }
 
-    public void startMinigame()
+    public void StartMinigame()
     {
         // Display the game screen rather than the intro screen
         introUICG.GetComponent<CanvasGroup>().alpha = 0f;
@@ -165,12 +166,12 @@ public class ProgressBarHandler : MonoBehaviour
         progressBarContainer.SetActive(true);
 
         // Start the timer
-        minigame_running = true;
-        time_remaining = time;
-        clicks_remaining = clicks;
+        minigameRunning = true;
+        timeRemaining = time;
+        clicksRemaining = clicks;
     }
 
-    IEnumerator endMinigame(bool success)
+    IEnumerator EndMinigame(bool success)
     {
         gameUICG.GetComponent<CanvasGroup>().alpha = 0f;
         endUICG.GetComponent<CanvasGroup>().alpha = 1f;
@@ -179,7 +180,7 @@ public class ProgressBarHandler : MonoBehaviour
 
         if (success)
         {
-            minigame_running = false;
+            minigameRunning = false;
             Debug.Log("Minigame finished, you won!");
 
             // TODO: Hide button and start confetti explosion at its place
@@ -189,7 +190,7 @@ public class ProgressBarHandler : MonoBehaviour
         }
         else
         {
-            minigame_running = false;
+            minigameRunning = false;
             Debug.Log("Minigame finished, you lost...");
 
             finalText.text = "You lost :(";

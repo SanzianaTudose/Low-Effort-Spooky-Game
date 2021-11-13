@@ -5,16 +5,6 @@ using UnityEngine;
 public class ScrollAnimationHandler : MonoBehaviour
 {
     public Animator animator;
-    
-    void Start()
-    {
-        
-    }
-
-    void Update()
-    {
-        
-    }
 
     public void OpenScroll()
     {
