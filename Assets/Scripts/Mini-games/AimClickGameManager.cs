@@ -10,9 +10,8 @@ using UnityEngine.EventSystems;
  *  On circle click
  *  Mini-game state management (win, fail etc.)
 */
-public class AimClickGameManager : MonoBehaviour
+public class AimClickGameManager : Minigame
 {
-    [SerializeField] private TMP_Text timeText;
     [SerializeField] private GameObject circlePrefab;
     [SerializeField] private List<Sprite> spriteList; 
 
@@ -21,39 +20,25 @@ public class AimClickGameManager : MonoBehaviour
     [SerializeField] private Vector2 circleScaleRange = new Vector2(0.5f, 1f);
     [SerializeField] private float timeLimit = 5f;
 
-    private GameObject aimClickContainer;
     private Vector2 spawnBoundsX, spawnBoundsY;
 
     private int circleCount;
     private int circlesClicked = 0;
-    private float timeRemaining = 0;
-    private bool minigameRunning = false;
 
-    private void Update() {
-        // Handle time
-        if (minigameRunning && timeRemaining > 0) 
-            timeRemaining -= Time.deltaTime;
+    public override void Update() {
+        base.Update();
 
         HandleGameStates();
-
-        // Update UI
-        if (minigameRunning) {
-            float seconds = Mathf.FloorToInt(timeRemaining % 60);
-            float microseconds = Mathf.FloorToInt(timeRemaining * 100) % 100;
-            string textString = string.Format("{0:00}:{1:00}", seconds, microseconds);
-            timeText.text = textString;
-        }
     }
 
     #region Initialization
-    public void StartGame() {
-        if (minigameRunning) return;
+    public override void StartGame() {
+        base.StartGame();
 
-        aimClickContainer = gameObject;
         CalculateSpawnBounds();
 
         SpawnCircles();
-        aimClickContainer.SetActive(true);
+        minigameContainer.SetActive(true);
 
         circlesClicked = 0;
         minigameRunning = true;
@@ -61,7 +46,7 @@ public class AimClickGameManager : MonoBehaviour
     }
    
     private void CalculateSpawnBounds() {
-        RectTransform containerRect = aimClickContainer.GetComponent<RectTransform>();
+        RectTransform containerRect = minigameContainer.GetComponent<RectTransform>();
         RectTransform circleRect = circlePrefab.GetComponent<RectTransform>();
         if (containerRect == null)
             Debug.LogError("AimClickGameManager: RectTransform component could not be found on {aimClickContainer}.");
@@ -82,7 +67,7 @@ public class AimClickGameManager : MonoBehaviour
         circleCount = Mathf.FloorToInt(Random.Range(circleCountRange.x, circleCountRange.y));
 
         for (int i = 1; i <= circleCount; i++) {
-            GameObject circle = Instantiate(circlePrefab, aimClickContainer.transform);
+            GameObject circle = Instantiate(circlePrefab, minigameContainer.transform);
             SetUpCircleProperties(circle);
         }
     }

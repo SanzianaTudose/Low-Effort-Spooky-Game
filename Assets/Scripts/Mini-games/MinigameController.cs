@@ -8,7 +8,7 @@ public class MinigameController : MonoBehaviour
 {
     [SerializeField] GameObject introUI;
     [SerializeField] public TextMeshProUGUI countdownText;
-    [SerializeField] AimClickGameManager aimClickManger;
+    [SerializeField] Minigame minigameManager;
 
     [Header("Properties")]
     [SerializeField] private int countdownTime = 3;
@@ -30,7 +30,7 @@ public class MinigameController : MonoBehaviour
             else {
                 countdownRunning = false;
                 // Termination: Initiate minigame
-                aimClickManger.StartGame();
+                minigameManager.StartGame();
             }
         }
 

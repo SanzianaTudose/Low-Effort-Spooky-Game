@@ -320,10 +320,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Introduction UI
       objectReference: {fileID: 0}
-    - target: {fileID: 4149062450665673176, guid: 6a9a89e4c3aeee748acf551ad29fa9c3, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 4149062450665673177, guid: 6a9a89e4c3aeee748acf551ad29fa9c3, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -407,10 +403,6 @@ PrefabInstance:
     - target: {fileID: 4149062450665673177, guid: 6a9a89e4c3aeee748acf551ad29fa9c3, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4149062450665673178, guid: 6a9a89e4c3aeee748acf551ad29fa9c3, type: 3}
-      propertyPath: m_Alpha
-      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6a9a89e4c3aeee748acf551ad29fa9c3, type: 3}
@@ -621,6 +613,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c71ff2f9b121c1843ad1597617d823c2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  minigameContainer: {fileID: 1256953787}
   timeText: {fileID: 1154449858}
   circlePrefab: {fileID: 3250659143613752656, guid: debbc656322cf00448bc958fb44ba6a4, type: 3}
   spriteList:
@@ -813,7 +806,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   introUI: {fileID: 553272744}
   countdownText: {fileID: 553272743}
-  aimClickManger: {fileID: 1256953789}
+  minigameManager: {fileID: 1256953789}
   countdownTime: 3
 --- !u!1 &1537074970
 GameObject:
