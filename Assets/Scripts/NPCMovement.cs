@@ -9,18 +9,40 @@ public class NPCMovement : MonoBehaviour
     [SerializeField] private Vector2 waitTimeRange = new Vector2(1f, 2f);
     [SerializeField] private float waitProbability = 0.2f;
 
+    private Animator anim;
+
     private float moveSpeed;
     private float decisionTimeCount = 0;
-    
+
+    private bool facingRight = true;
+
     private Vector3 curMoveDir;
 
     private void Start() {
+        anim = GetComponent<Animator>();
+
         moveSpeed = Random.Range(moveSpeedRange.x, moveSpeedRange.y);
     }
 
     private void Update() {
-        // Move the object in the chosen direction at the set speed
+        /*// Move the object in the chosen direction at the set speed
+        if (curMoveDir.x > 0 && !facingRight)
+        {
+            // ... flip the player.
+            Flip();
+        }
+        // Otherwise if the input is moving the player left and the player is facing right...
+        else if (curMoveDir.x < 0 && facingRight)
+        {
+
+            // ... flip the player.
+            Flip();
+        }*/
+
+
         transform.position += curMoveDir * Time.deltaTime * moveSpeed;
+        AnimateNPC();
+
 
         if (decisionTimeCount > 0) decisionTimeCount -= Time.deltaTime;
         else StartNewMovement();
@@ -44,5 +66,32 @@ public class NPCMovement : MonoBehaviour
     private void OnCollisionEnter2D(Collision2D collision) {
         // Move away when colliding with an object
         curMoveDir = -curMoveDir;
+    }
+
+    private void Flip()
+    {
+        // Switch the way the player is labelled as facing.
+        facingRight = !facingRight;
+
+        transform.Rotate(0f, 180f, 0f);
+    }
+
+    void AnimateNPC()
+    {
+        if (curMoveDir.x > 0 && !facingRight)
+        {
+            anim.SetBool("IsWalking", true);
+            Flip();
+
+        }
+        else if (curMoveDir.x < 0 && facingRight)
+        {
+            anim.SetBool("IsWalking", true);
+            Flip();
+        }
+        else if (curMoveDir.x == 0)
+        {
+            anim.SetBool("IsWalking", false);
+        }
     }
 }
