@@ -7,16 +7,33 @@ using TMPro;
 public class ProgressBarHandler : MonoBehaviour
 {
     public GameObject progress;
-    public float animationSpeed = 3f;
     public float time = 3;
     public int clicks = 3;
+
     public TextMeshProUGUI timeText;
+
     public Image buttonImage;
     public int buttonShakeAmount = 5;
-    
+
+    public TextMeshProUGUI countdownText;
+    public int countdownTime = 3;
+
+    public TextMeshProUGUI finalText;
+
+    public GameObject bgOverlay;
+    public GameObject minigameObj;
+
+    // Canvas groups for different screens (stands for name-User-Interface-Canvas-Group)
+    public GameObject generalUICG; // Remains on screen during the entire game
+    public GameObject introUICG;
+    public GameObject gameUICG;
+    public GameObject endUICG;
+
     private int clicks_remaining;
     private float time_remaining;
+    private float countdown_time_remaining;
     private bool minigame_running = false;
+    private bool countdown_running = false;
     private Vector3 initialButtonImagePos;
 
     // Start is called before the first frame update
@@ -29,15 +46,27 @@ public class ProgressBarHandler : MonoBehaviour
         float seconds = Mathf.FloorToInt(time % 60);
         string textString = string.Format("{0:00}.00", seconds);
         timeText.text = textString;
+
+        startIntro();
     }
 
     // Update is called once per frame
     void Update()
     {
-        // Minigame initiation
-        if (Input.GetKeyDown("q"))
+        // Handle countdown timer
+        if (countdown_running && countdown_time_remaining > 0)
         {
-            startMinigame();
+            countdown_time_remaining -= Time.deltaTime;
+            if (countdown_time_remaining > 0)
+            {
+                // Update text
+                countdownText.text = Mathf.FloorToInt(countdown_time_remaining + 1 % 60).ToString();
+            }
+            else
+            {
+                // Termination: Initiate minigame
+                startMinigame();
+            }
         }
 
         // Handle minigame whilest time is remaining and the game is running
@@ -72,19 +101,18 @@ public class ProgressBarHandler : MonoBehaviour
 
                 buttonImage.transform.position = newButtonPos;
 
-                Debug.Log(newButtonPos);
-
                 // Deal with key presses
                 if (Input.GetKeyDown("x"))
                 {
                     progress.transform.localScale += new Vector3(0f, (float)1 / clicks, 0f);
                     clicks_remaining--;
 
+                    // TODO: Add scale bump to button on press
+
                     // Minigame termination by winning
                     if (clicks_remaining == 0)
                     {
-                        minigame_running = false;
-                        print("Minigame finished, you won!");
+                        StartCoroutine(endMinigame(true));
                     }
                 }
             }
@@ -93,8 +121,7 @@ public class ProgressBarHandler : MonoBehaviour
         // Timer termination
         if (minigame_running && time_remaining <= 0)
         {
-            minigame_running = false;
-            print("Minigame finished, you failed!");
+           StartCoroutine(endMinigame(false));
         }
     }
 
@@ -105,51 +132,68 @@ public class ProgressBarHandler : MonoBehaviour
         return Mathf.Round(value * mult) / mult;
     }
 
-    public void shakeImage(Image objToShake)
+    public void startIntro()
     {
-        float speed = 1.0f;
-        float amount = 1.0f;
+        Debug.Log("Minigame starting...");
+        progress.transform.localScale = new Vector3(1f, 0f, 1f); // Reset progress bar
 
-        float x = objToShake.transform.position.x * Mathf.Sin(Time.deltaTime * speed) * amount;
-        float y = objToShake.transform.position.y;
-        float z = objToShake.transform.position.z;
+        // Show introduction
+        // Display explanation text + countdown
+        introUICG.GetComponent<CanvasGroup>().alpha = 1f;
+        gameUICG.GetComponent<CanvasGroup>().alpha = 0f;
+        endUICG.GetComponent<CanvasGroup>().alpha = 0f;
 
-        objToShake.transform.position = new Vector3(x, y, z);
+        // Initiate the countdown
+        countdown_time_remaining = countdownTime;
+        countdownText.text = Mathf.FloorToInt(countdown_time_remaining % 60).ToString();
+        countdown_running = true;
     }
 
     public void startMinigame()
     {
-        Debug.Log("Minigame starting...");
+        // Display the game screen rather than the intro screen
+        introUICG.GetComponent<CanvasGroup>().alpha = 0f;
+        gameUICG.GetComponent<CanvasGroup>().alpha = 1f;
+
+        // Start the timer
         minigame_running = true;
         time_remaining = time;
         clicks_remaining = clicks;
-        progress.transform.localScale = new Vector3(1f, 0f, 1f); // Reset progress bar
-
-        // Show introduction
-            // Display explanation text + countdown
-
-        // Initiate actual minigame AFTER previous events ended
-            // Hide explanation text + countdown
-            // Display Button and bar
-            // Start the timer
-            // Start shaking the button
-
     }
 
-    public void endMinigame(bool success)
+    IEnumerator endMinigame(bool success)
     {
+        gameUICG.GetComponent<CanvasGroup>().alpha = 0f;
+        endUICG.GetComponent<CanvasGroup>().alpha = 1f;
+
         if (success)
         {
-            // Hide button and start confetti explosion at its place
+            minigame_running = false;
+            Debug.Log("Minigame finished, you won!");
 
-            // Display "Congratulations, you won!" text
-        } else
+            // TODO: Hide button and start confetti explosion at its place
+
+            finalText.text = "Congratulations, you won!";
+
+        }
+        else
         {
-            // Display "You lost :(" text
+            minigame_running = false;
+            Debug.Log("Minigame finished, you lost...");
+
+            finalText.text = "You lost :(";
         }
 
-        // Fade the elements out and animate the black overlay element's transparency to 0.
-        // Simple rendition: Hide the elements and overlay
+        // After two seconds, continue to the rest of the game
+        yield return new WaitForSeconds(2);
+
+        // TODO: Hide the elements and overlay
+        bgOverlay.GetComponent<SpriteRenderer>().color = new Color(0, 0, 0, 0); // TODO: Animate color change and only destroy after that
+        Destroy(bgOverlay, 0); // Destroy after delay as indicated by animation above
+        Destroy(minigameObj);
+
+        endUICG.GetComponent<CanvasGroup>().alpha = 0f;
+        generalUICG.GetComponent<CanvasGroup>().alpha = 0f;
     }
 
 }
