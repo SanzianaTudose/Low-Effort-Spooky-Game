@@ -29,16 +29,7 @@ public class AimClickGameManager : MonoBehaviour
     private float timeRemaining = 0;
     private bool minigameRunning = false;
 
-    private void Start() {
-        aimClickContainer = gameObject;
-        CalculateSpawnBounds();
-    }
-
     private void Update() {
-        // Handle player input
-        if (Input.GetKeyDown(KeyCode.Q) && !minigameRunning)
-            StartGame();
-
         // Handle time
         if (minigameRunning && timeRemaining > 0) 
             timeRemaining -= Time.deltaTime;
@@ -49,15 +40,20 @@ public class AimClickGameManager : MonoBehaviour
         if (minigameRunning) {
             float seconds = Mathf.FloorToInt(timeRemaining % 60);
             float microseconds = Mathf.FloorToInt(timeRemaining * 100) % 100;
-            string textString = string.Format("{0:00}.{1:00}", seconds, microseconds);
+            string textString = string.Format("{0:00}:{1:00}", seconds, microseconds);
             timeText.text = textString;
         }
     }
 
     #region Initialization
-    private void StartGame() {
+    public void StartGame() {
+        if (minigameRunning) return;
+
+        aimClickContainer = gameObject;
+        CalculateSpawnBounds();
+
         SpawnCircles();
-        // TODO: set aimClickContainer active 
+        aimClickContainer.SetActive(true);
 
         circlesClicked = 0;
         minigameRunning = true;
@@ -120,7 +116,6 @@ public class AimClickGameManager : MonoBehaviour
         if (circleImage == null)
             Debug.LogError("AimClickGameManager: Image component could not be found on {circle}.");
         int spriteIndex = Mathf.FloorToInt(Random.Range(0.0f, spriteList.Count));
-        print(spriteList.Count + " " + spriteIndex);
         circleImage.sprite = spriteList[spriteIndex];
     }
     #endregion
