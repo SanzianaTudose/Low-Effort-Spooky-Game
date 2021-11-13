@@ -6,6 +6,7 @@ using TMPro;
 
 public class ProgressBarHandler : MonoBehaviour
 {
+    public GameObject progressBarContainer;
     public GameObject progress;
     public float time = 3;
     public int clicks = 3;
@@ -22,6 +23,8 @@ public class ProgressBarHandler : MonoBehaviour
 
     public GameObject bgOverlay;
     public GameObject minigameObj;
+
+    public GameObject titleScroll;
 
     // Canvas groups for different screens (stands for name-User-Interface-Canvas-Group)
     public GameObject generalUICG; // Remains on screen during the entire game
@@ -46,6 +49,8 @@ public class ProgressBarHandler : MonoBehaviour
         float seconds = Mathf.FloorToInt(time % 60);
         string textString = string.Format("{0:00}.00", seconds);
         timeText.text = textString;
+
+        progressBarContainer.SetActive(false);
 
         startIntro();
     }
@@ -136,6 +141,7 @@ public class ProgressBarHandler : MonoBehaviour
     {
         Debug.Log("Minigame starting...");
         progress.transform.localScale = new Vector3(1f, 0f, 1f); // Reset progress bar
+        titleScroll.GetComponent<ScrollAnimationHandler>().OpenScroll();
 
         // Show introduction
         // Display explanation text + countdown
@@ -155,6 +161,9 @@ public class ProgressBarHandler : MonoBehaviour
         introUICG.GetComponent<CanvasGroup>().alpha = 0f;
         gameUICG.GetComponent<CanvasGroup>().alpha = 1f;
 
+        // Display the bar
+        progressBarContainer.SetActive(true);
+
         // Start the timer
         minigame_running = true;
         time_remaining = time;
@@ -165,6 +174,8 @@ public class ProgressBarHandler : MonoBehaviour
     {
         gameUICG.GetComponent<CanvasGroup>().alpha = 0f;
         endUICG.GetComponent<CanvasGroup>().alpha = 1f;
+
+        titleScroll.GetComponent<ScrollAnimationHandler>().CloseScroll();
 
         if (success)
         {
@@ -193,7 +204,6 @@ public class ProgressBarHandler : MonoBehaviour
         Destroy(minigameObj);
 
         endUICG.GetComponent<CanvasGroup>().alpha = 0f;
-        generalUICG.GetComponent<CanvasGroup>().alpha = 0f;
     }
 
 }
