@@ -398,7 +398,7 @@ MonoBehaviour:
   m_fontSizeMax: 72
   m_fontStyle: 0
   m_HorizontalAlignment: 2
-  m_VerticalAlignment: 256
+  m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
   m_wordSpacing: 0
@@ -491,7 +491,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c71ff2f9b121c1843ad1597617d823c2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  timeText: {fileID: 0}
+  timeText: {fileID: 1154449858}
   circlePrefab: {fileID: 3250659143613752656, guid: debbc656322cf00448bc958fb44ba6a4, type: 3}
   circleCountRange: {x: 8, y: 15}
   circleScaleRange: {x: 0.5, y: 1}
