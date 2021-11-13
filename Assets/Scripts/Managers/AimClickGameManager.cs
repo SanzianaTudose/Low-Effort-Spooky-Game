@@ -14,6 +14,7 @@ public class AimClickGameManager : MonoBehaviour
 {
     [SerializeField] private TMP_Text timeText;
     [SerializeField] private GameObject circlePrefab;
+    [SerializeField] private List<Sprite> spriteList; 
 
     [Header("Game Properties")]
     [SerializeField] private Vector2Int circleCountRange = new Vector2Int(3, 6);
@@ -56,6 +57,7 @@ public class AimClickGameManager : MonoBehaviour
     #region Initialization
     private void StartGame() {
         SpawnCircles();
+        // TODO: set aimClickContainer active 
 
         circlesClicked = 0;
         minigameRunning = true;
@@ -104,7 +106,7 @@ public class AimClickGameManager : MonoBehaviour
         // Set up position 
         RectTransform circleRect = circle.GetComponent<RectTransform>();
         if (circleRect == null)
-            Debug.LogError("AimClickGameManager: RectTransform component could not be found on {circlePrefab}.");
+            Debug.LogError("AimClickGameManager: RectTransform component could not be found on {circle}.");
 
         float circleX = Random.Range(spawnBoundsX.x, spawnBoundsX.y);
         float circleY = Random.Range(spawnBoundsY.x, spawnBoundsY.y);
@@ -112,6 +114,14 @@ public class AimClickGameManager : MonoBehaviour
 
         // Set up scale 
         circleRect.localScale = circleRect.localScale * Random.Range(circleScaleRange.x, circleScaleRange.y);
+
+        // Set up sprite
+        Image circleImage = circle.GetComponent<Image>();
+        if (circleImage == null)
+            Debug.LogError("AimClickGameManager: Image component could not be found on {circle}.");
+        int spriteIndex = Mathf.FloorToInt(Random.Range(0.0f, spriteList.Count));
+        print(spriteList.Count + " " + spriteIndex);
+        circleImage.sprite = spriteList[spriteIndex];
     }
     #endregion
 
@@ -131,8 +141,10 @@ public class AimClickGameManager : MonoBehaviour
 
     // Referenced by the Event Trigger component on Button Image
     public void OnButtonClick(GameObject curCircle) {
-        circlesClicked++;
+        if (!minigameRunning)
+            return;
 
+        circlesClicked++;
         Destroy(curCircle);
     }
 
