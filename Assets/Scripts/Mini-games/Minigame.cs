@@ -51,5 +51,6 @@ public class Minigame : MonoBehaviour
        
         minigameContainer.SetActive(false);
         overlayPanel.SetActive(false);
+        Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
     }
 }

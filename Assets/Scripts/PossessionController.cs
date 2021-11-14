@@ -152,7 +152,7 @@ public class PossessionController : MonoBehaviour
         minigame.minigameState = -1;
         // Enable player movement and NPC Movement
         GetComponent<PlayerMovement>().enabled = true;
-        highlightClosest.GetComponent<NPCMovement>().enabled = true;
+        highlightClosest.GetComponent<NPCMovement>().enabled = true; 
     }
 
     IEnumerator StartPossessionAfterSeconds(float sec) {

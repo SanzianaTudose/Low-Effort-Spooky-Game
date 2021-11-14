@@ -108,14 +108,12 @@ public class AimClickGameManager : Minigame
         // Handle FAIL state
         if (minigameRunning && timeRemaining <= 0) {
             minigameState = 0;
-            Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto); ;
             EndGame();
         }
 
         // Handle WIN state
         if (minigameRunning && timeRemaining > 0 && circlesClicked == circleCount) {
             minigameState = 1;
-            Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto); ;
             EndGame();
         }
     }
