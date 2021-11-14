@@ -6,8 +6,7 @@ using TMPro;
 
 public class ProgressBarHandler : MonoBehaviour
 {
-    public GameObject progressBarContainer;
-    public GameObject progress;
+    public Image progress;
     public float time = 3;
     public int clicks = 3;
 
@@ -42,16 +41,6 @@ public class ProgressBarHandler : MonoBehaviour
 
     void Start()
     {
-        // Initialize variables
-        initialButtonImagePos = buttonImage.transform.position;
-
-        // Update time
-        float seconds = Mathf.FloorToInt(time % 60);
-        string textString = string.Format("{0:00}.00", seconds);
-        timeText.text = textString;
-
-        progressBarContainer.SetActive(false);
-
         StartIntro();
     }
 
@@ -109,9 +98,8 @@ public class ProgressBarHandler : MonoBehaviour
                 // Deal with key presses
                 if (Input.GetKeyDown("x"))
                 {
-                    Debug.Log("You pressed the button!");
-                    progress.transform.localScale += new Vector3(0f, (float) 1 / clicks, 0f);
                     clicksRemaining--;
+                    progress.GetComponent<Image>().fillAmount = (float)(clicks - clicksRemaining) / clicks;
 
                     // TODO: Add scale bump to button on press
 
@@ -141,10 +129,28 @@ public class ProgressBarHandler : MonoBehaviour
     public void StartIntro()
     {
         Debug.Log("Minigame starting...");
-        progress.transform.localScale = new Vector3(1f, 0f, 1f); // Reset progress bar
+
+        generalUICG.GetComponent<CanvasGroup>().alpha = 0f;
+
+        float smoothTime = 0.2f;
+        float alphaVelocity = 0f;
+
+        float smoothFadeIn = Mathf.SmoothDamp(0f, 1f, ref alphaVelocity, smoothTime);
+
+        // TODO: Use the above smoothing. For that, this code
+        // must be in update cause it requires multiple updates
+        generalUICG.GetComponent<CanvasGroup>().alpha = 1f;
+
+        // Initialize variables
+        initialButtonImagePos = buttonImage.transform.position;
+
+        // Update time
+        float seconds = Mathf.FloorToInt(time % 60);
+        string textString = string.Format("{0:00}.00", seconds);
+        timeText.text = textString;
+        progress.GetComponent<Image>().fillAmount = 0;
         titleScroll.GetComponent<ScrollAnimationHandler>().OpenScroll();
 
-        // Show introduction
         // Display explanation text + countdown
         introUICG.GetComponent<CanvasGroup>().alpha = 1f;
         gameUICG.GetComponent<CanvasGroup>().alpha = 0f;
@@ -161,9 +167,6 @@ public class ProgressBarHandler : MonoBehaviour
         // Display the game screen rather than the intro screen
         introUICG.GetComponent<CanvasGroup>().alpha = 0f;
         gameUICG.GetComponent<CanvasGroup>().alpha = 1f;
-
-        // Display the bar
-        progressBarContainer.SetActive(true);
 
         // Start the timer
         minigameRunning = true;
@@ -199,11 +202,11 @@ public class ProgressBarHandler : MonoBehaviour
         // After two seconds, continue to the rest of the game
         yield return new WaitForSeconds(2);
 
-        // TODO: Hide the elements and overlay
-        bgOverlay.GetComponent<SpriteRenderer>().color = new Color(0, 0, 0, 0); // TODO: Animate color change and only destroy after that
-        Destroy(bgOverlay, 0); // Destroy after delay as indicated by animation above
-        Destroy(minigameObj);
+        float smoothTime = 0.2f;
+        float alphaVelocity = 0f;
 
+        float smoothFadeOut = Mathf.SmoothDamp(1f, 0f, ref alphaVelocity, smoothTime);
+        generalUICG.GetComponent<CanvasGroup>().alpha = 0f;
         endUICG.GetComponent<CanvasGroup>().alpha = 0f;
     }
 
