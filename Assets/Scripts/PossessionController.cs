@@ -150,6 +150,10 @@ public class PossessionController : MonoBehaviour
             6. Enable lastPossessed npc's AI
             */
 
+            /* 
+               I check if the NPC's collider touches some other collider
+               If it does, generate a new random location and check again
+            */
             while (!spawnedAgain)
             {
                 Vector2 randPosition = new Vector2(Random.Range(-30.0f, 8.8f), Random.Range(-19.0f, 6.0f));
