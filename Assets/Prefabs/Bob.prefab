@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 668206784103866812}
   - component: {fileID: 668206784103866802}
   - component: {fileID: 5599834992188440588}
-  m_Layer: 4
+  m_Layer: 0
   m_Name: Bob
   m_TagString: CanPosses
   m_Icon: {fileID: 0}
@@ -179,7 +179,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3573391768169030338}
   - component: {fileID: 3991767202697978757}
-  m_Layer: 4
+  m_Layer: 0
   m_Name: Highlight
   m_TagString: Untagged
   m_Icon: {fileID: 0}
