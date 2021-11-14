@@ -127,8 +127,10 @@ public class PossessionController : MonoBehaviour
 
     private void TriggerMinigame() {
         NPCMinigame npcMinigame = highlightClosest.GetComponent<NPCMinigame>();
-        if (npcMinigame == null) // NPC doesn't have an NPCMinigame component 
+        if (npcMinigame == null) { // NPC doesn't have an NPCMinigame component 
             StartPossession(); // just posses without any minigame
+            return;
+        }
 
         // Disable player movement and NPC Movement
         GetComponent<PlayerMovement>().enabled = false;
