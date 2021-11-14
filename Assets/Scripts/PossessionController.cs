@@ -96,52 +96,8 @@ public class PossessionController : MonoBehaviour
             }
 
             if (Input.GetKeyDown("e") && !possessing)
-            {
-                /*
-                Once we posses someone we want to still
-                keep track of everything but not give the
-                player the chance to highlight or posses
-                anyone else.
-
-                1. Set possessing to true
-                2. Disable player's sprite
-                3. Disable AI of npc
-                4. Move player to location of chosen target
-                5. Copy target's sprite (possessed version)
-                6. Disable sprite of npc
-                7. Change sprite to possessed sprite
-                8. Disable current highlight
-                9. Store the target as lastPossessed
-                */
-
-                possessing = true;
-
-                gameObject.GetComponent<SpriteRenderer>().enabled = false;
-
-                highlightClosest.GetComponent<NPCMovement>().enabled = false;
-
-                highlightClosest.GetComponent<BoxCollider2D>().enabled = false;
-                gameObject.transform.position = highlightClosest.gameObject.transform.position;
-
-                /*
-                This is a temporary solution!
-                A possible way of implementing sprite specific stuff
-                is making use of a switch case based on a property of the target
-                for example: public int variable.
-                */
-                gameObject.GetComponent<SpriteRenderer>().sprite = possessedSprite;
-
-                highlightClosest.GetComponent<SpriteRenderer>().enabled = false;
-
-                gameObject.GetComponent<SpriteRenderer>().enabled = true;
-
-                highlightClosest.transform.GetChild(0).GetComponent<SpriteRenderer>().enabled = false;
-
-                lastPossessed = highlightClosest;
-
-                //if (Input.GetKeyDown("e") && !possessing)
                 TriggerMinigame();
-            }
+            
         }
 
         //Escape the current possession
