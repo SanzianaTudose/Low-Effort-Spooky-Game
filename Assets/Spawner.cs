@@ -5,71 +5,44 @@ using UnityEngine;
 public class Spawner : MonoBehaviour
 {
 
-    public GameObject BobPrefab;
-    private bool spawnedYet = false;
-    public LayerMask mask;
+    public GameObject[] Prefabs;
+    private bool[] spawnedYet2 = new bool[3];
 
     // Start is called before the first frame update
     void Start()
     {
-        while (spawnedYet == false)
+        // Initialize all prefabs as not spawned yet
+        for (int i = 0; i <Prefabs.Length; i++)
         {
-            SpawnEnemyNPC();
+            spawnedYet2[i] = false;
         }
-    }
 
-    // Update is called once per frame
-    void Update()
-    {
+        // start spawning things and changing their status accordingly
+        for (int i = 0; i < Prefabs.Length; i++)
+        {
+            while (spawnedYet2[i] == false)
+            {
+                SpawnEnemyNPC(i);
+            }
+        }
         
     }
 
-    private void SpawnEnemyNPC()
+    private void SpawnEnemyNPC(int i)
     {
-        if (!spawnedYet)
+        Vector2 randPosition = new Vector2(Random.Range(-30.0f, 8.8f), Random.Range(-19.0f, 6.0f));
+        GameObject npc = Instantiate(Prefabs[i]);
+        npc.transform.position = randPosition;
+
+        if (!Physics2D.OverlapCircle(npc.transform.position, 2f))
         {
-            Vector2 randPosition = new Vector2(Random.Range(-30.0f, 8.8f), Random.Range(-19.0f, 6.0f));
-            GameObject npc = Instantiate(BobPrefab);
-            npc.transform.position = randPosition;
-
-            if (!Physics2D.OverlapCircle(npc.transform.position, 2f))
-            {
-                Debug.Log("Nothing Touches b");
-                spawnedYet = true;
-            }
-            else if (Physics2D.OverlapCircle(npc.transform.position, 2f))
-            {
-                Debug.Log("Something touches");
-                Destroy(npc);
-            }
-            //GameObject npc = Instantiate(BobPrefab);
-            //npc.transform.position = new Vector2(Random.Range(-30.0f, 8.8f), Random.Range(-19.0f, 6.0f));
+            Debug.Log("Nothing Touches b");
+            spawnedYet2[i] = true;
         }
-    }
-
-    private bool InCollider()
-    {
-        Vector2 position = new Vector2(BobPrefab.transform.position.x - 0.22f, BobPrefab.transform.position.y);
-        Vector2 direction = Vector2.down;
-        float distance = 20f;
-
-        //RaycastHit2D hit = Physics2D.Raycast(position, direction, distance);
-
-        Debug.DrawRay(position, direction, Color.green);
-        RaycastHit2D downRay = Physics2D.Raycast(position, Vector2.down, distance);
-        Debug.DrawRay(position, direction, Color.red);
-        RaycastHit2D upRay = Physics2D.Raycast(position, Vector2.up, distance);
-        RaycastHit2D leftRay = Physics2D.Raycast(position, Vector2.left, distance);
-        RaycastHit2D rightRay = Physics2D.Raycast(position, Vector2.right, distance);
-
-        if (downRay.collider == null && upRay.collider == null && leftRay.collider == null && rightRay.collider == null)
+        else if (Physics2D.OverlapCircle(npc.transform.position, 2f))
         {
-            return true;
+            Debug.Log("Something touches");
+            Destroy(npc);
         }
-        else
-        {
-            return false;
-        }
-
     }
 }

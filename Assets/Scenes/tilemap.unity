@@ -3267,7 +3267,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d839ddfb5e316c41a67924f6d487f3c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  BobPrefab: {fileID: 668206784103866807, guid: 1f4de27f796dfe747a4c899b26465eff, type: 3}
+  Prefabs:
+  - {fileID: 668206784103866807, guid: 1f4de27f796dfe747a4c899b26465eff, type: 3}
+  - {fileID: 893440326312888320, guid: 9c6a70e152216b34b80475e3712c3d94, type: 3}
+  - {fileID: 4168016079400144094, guid: 6c7e38a896758f9418f2e57332f98703, type: 3}
   mask:
     serializedVersion: 2
     m_Bits: 16
