@@ -8,8 +8,10 @@ public class Minigame : MonoBehaviour
 {
     [SerializeField] protected GameObject minigameContainer;
     [SerializeField] private TMP_Text timeText;
+    [SerializeField] private GameObject overlayPanel;
 
-    protected bool minigameRunning = false;
+    public int minigameState = -1;
+    public bool minigameRunning = false;
     protected float timeRemaining = 0;
 
     protected void Start() {
@@ -35,10 +37,20 @@ public class Minigame : MonoBehaviour
     public virtual void StartGame() {
         if (minigameRunning) return;
 
+        minigameRunning = true;
         minigameContainer.SetActive(true);
     }
 
     public virtual void EndGame() {
+        minigameRunning = false;
+        Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto); ;
+        StartCoroutine(DisableMinigameAfterSeconds(1f));
+    }
+
+    IEnumerator DisableMinigameAfterSeconds(float sec) {
+        yield return new WaitForSeconds(sec);
+       
         minigameContainer.SetActive(false);
+        overlayPanel.SetActive(false);
     }
 }

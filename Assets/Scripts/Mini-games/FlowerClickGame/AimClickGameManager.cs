@@ -41,7 +41,6 @@ public class AimClickGameManager : Minigame
         SpawnCircles();
 
         circlesClicked = 0;
-        minigameRunning = true;
         timeRemaining = timeLimit;
     }
    
@@ -108,14 +107,14 @@ public class AimClickGameManager : Minigame
     private void HandleGameStates() {
         // Handle FAIL state
         if (minigameRunning && timeRemaining <= 0) {
-            minigameRunning = false;
-            print("fail");
+            minigameState = 0;
+            EndGame();
         }
 
         // Handle WIN state
         if (minigameRunning && timeRemaining > 0 && circlesClicked == circleCount) {
-            minigameRunning = false;
-            print("win");
+            minigameState = 1;
+            EndGame();
         }
     }
 

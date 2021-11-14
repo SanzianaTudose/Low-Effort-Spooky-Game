@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class PossessionController : MonoBehaviour
 {
+    [SerializeField] MinigameController minigameController;
     [SerializeField] Sprite possessedSprite;
     [SerializeField] Sprite defaultSprite;
     List<GameObject> objectsWithinRange = new List<GameObject>();
@@ -60,7 +61,7 @@ public class PossessionController : MonoBehaviour
                 if (!possessing)
                 {
                     //Enable highlight on this object (added sprite to npc (disabled on default))
-                    Debug.Log($"Enable highlight for {highlightClosest.name}");
+                    //Debug.Log($"Enable highlight for {highlightClosest.name}");
                     highlightClosest.transform.GetChild(0).GetComponent<SpriteRenderer>().enabled = true;
                 }
 
@@ -73,8 +74,8 @@ public class PossessionController : MonoBehaviour
                 if (!possessing)
                 {
                     //Disable highlight on old object and enable on new one
-                    Debug.Log($"Disable highlight for {highlightClosest.name}");
-                    Debug.Log($"Enable highlight for {GetClosestTarget(objectsWithinRange).name}");
+                    //Debug.Log($"Disable highlight for {highlightClosest.name}");
+                    //Debug.Log($"Enable highlight for {GetClosestTarget(objectsWithinRange).name}");
 
                     highlightClosest.transform.GetChild(0).GetComponent<SpriteRenderer>().enabled = false;
                     GetClosestTarget(objectsWithinRange).transform.GetChild(0).GetComponent<SpriteRenderer>().enabled = true;
@@ -83,54 +84,9 @@ public class PossessionController : MonoBehaviour
                 //Update the current highlightClosest
                 highlightClosest = GetClosestTarget(objectsWithinRange);
             }
-            
+
             if (Input.GetKeyDown("e") && !possessing)
-            {
-                /*
-                Once we posses someone we want to still
-                keep track of everything but not give the
-                player the chance to highlight or posses
-                anyone else.
-
-                1. Set possessing to true
-                2. Disable player's sprite
-                3. Disable AI of npc
-                4. Move player to location of chosen target
-                5. Copy target's sprite (possessed version)
-                6. Disable sprite of npc
-                7. Change sprite to possessed sprite
-                8. Disable current highlight
-                9. Store the target as lastPossessed
-                */
-
-                possessing = true;
-
-                gameObject.GetComponent<SpriteRenderer>().enabled = false;
-
-                highlightClosest.GetComponent<NPCMovement>().enabled = false;
-
-                highlightClosest.GetComponent<BoxCollider2D>().enabled = false;
-                gameObject.transform.position = highlightClosest.gameObject.transform.position;
-
-                /*
-                This is a temporary solution!
-                A possible way of implementing sprite specific stuff
-                is making use of a switch case based on a property of the target
-                for example: public int variable.
-                */
-                gameObject.GetComponent<SpriteRenderer>().sprite = possessedSprite;
-
-                highlightClosest.GetComponent<SpriteRenderer>().enabled = false;
-
-                gameObject.GetComponent<SpriteRenderer>().enabled = true;
-
-                highlightClosest.transform.GetChild(0).GetComponent<SpriteRenderer>().enabled = false;
-
-                lastPossessed = highlightClosest;
-
-                //Show the name of the target we will posses
-                Debug.Log($"Posses -> {GetClosestTarget(objectsWithinRange).name}");
-            }
+                TriggerMinigame();
         }
 
         //Escape the current possession
@@ -169,6 +125,77 @@ public class PossessionController : MonoBehaviour
         }
     }
 
+    private void TriggerMinigame() {
+        NPCMinigame npcMinigame = highlightClosest.GetComponent<NPCMinigame>();
+        if (npcMinigame == null) // NPC doesn't have an NPCMinigame component 
+            return;
+
+        Minigame minigame = npcMinigame.minigame;
+        minigameController.startIntro(minigame);
+        StartCoroutine(WaitForMinigameEnd(minigame));
+    }
+
+    IEnumerator WaitForMinigameEnd(Minigame minigame) {
+        while (minigame.minigameState == -1)
+            yield return null;
+
+        if (minigame.minigameState == 1)
+            StartCoroutine(StartPossessionAfterSeconds(2f));
+        minigame.minigameState = -1;
+    }
+
+    IEnumerator StartPossessionAfterSeconds(float sec) {
+        yield return new WaitForSeconds(sec);
+        StartPossession();
+    }
+
+    private void StartPossession() {
+        /*
+        Once we posses someone we want to still
+        keep track of everything but not give the
+        player the chance to highlight or posses
+        anyone else.
+
+        1. Set possessing to true
+        2. Disable player's sprite
+        3. Disable AI of npc
+        4. Move player to location of chosen target
+        5. Copy target's sprite (possessed version)
+        6. Disable sprite of npc
+        7. Change sprite to possessed sprite
+        8. Disable current highlight
+        9. Store the target as lastPossessed
+        */
+
+        possessing = true;
+
+        gameObject.GetComponent<SpriteRenderer>().enabled = false;
+
+        highlightClosest.GetComponent<NPCMovement>().enabled = false;
+
+        highlightClosest.GetComponent<BoxCollider2D>().enabled = false;
+        gameObject.transform.position = highlightClosest.gameObject.transform.position;
+
+        /*
+        This is a temporary solution!
+        A possible way of implementing sprite specific stuff
+        is making use of a switch case based on a property of the target
+        for example: public int variable.
+        */
+        gameObject.GetComponent<SpriteRenderer>().sprite = possessedSprite;
+
+        highlightClosest.GetComponent<SpriteRenderer>().enabled = false;
+
+        gameObject.GetComponent<SpriteRenderer>().enabled = true;
+
+        highlightClosest.transform.GetChild(0).GetComponent<SpriteRenderer>().enabled = false;
+
+        lastPossessed = highlightClosest;
+
+        //Show the name of the target we will posses
+        //Debug.Log($"Posses -> {GetClosestTarget(objectsWithinRange).name}");
+    }
+
     void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.tag == "CanPosses")
@@ -201,7 +228,7 @@ public class PossessionController : MonoBehaviour
                 if (!possessing)
                 {
                     //Disable highlight on previous object
-                    Debug.Log($"Disable highlight for {highlightClosest.name}");
+                    //Debug.Log($"Disable highlight for {highlightClosest.name}");
                     highlightClosest.transform.GetChild(0).GetComponent<SpriteRenderer>().enabled = false;
                 }
 

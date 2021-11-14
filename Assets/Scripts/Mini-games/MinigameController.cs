@@ -6,24 +6,20 @@ using TMPro;
 
 public class MinigameController : MonoBehaviour
 {
-    [SerializeField] GameObject introUI;
+    [SerializeField] private GameObject introUI;
     [SerializeField] public TextMeshProUGUI countdownText;
-    [SerializeField] Minigame minigameManager;
     [SerializeField] private GameObject overlayPanel;
 
     [Header("Properties")]
     [SerializeField] private int countdownTime = 3;
 
+    Minigame curMinigame;
     private float countdownTimeRemaining;
     private bool countdownRunning = false;
 
     // Update is called once per frame
     void Update()
     {
-        // Handle player input
-        if (Input.GetKeyDown(KeyCode.Q))
-            startIntro();
-
         // Handle countdown timer
         if (countdownRunning) {
             if (countdownTimeRemaining > 0)
@@ -32,7 +28,7 @@ public class MinigameController : MonoBehaviour
                 countdownRunning = false;
                 introUI.SetActive(false);
                 // Termination: Initiate minigame
-                minigameManager.StartGame();
+                curMinigame.StartGame();
             }
         }
 
@@ -41,7 +37,10 @@ public class MinigameController : MonoBehaviour
             countdownText.text = Mathf.FloorToInt(countdownTimeRemaining + 1 % 60).ToString();
     }
 
-    public void startIntro() {
+    public void startIntro(Minigame minigameToStart) {
+        // TODO: stop PlayerInput here
+        curMinigame = minigameToStart;
+
         // Show introduction
         // Display explanation text + countdown
         introUI.SetActive(true);
