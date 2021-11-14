@@ -1200,7 +1200,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_UiScaleMode: 0
   m_ReferencePixelsPerUnit: 100
-  m_ScaleFactor: 1
+  m_ScaleFactor: 0.895
   m_ReferenceResolution: {x: 800, y: 600}
   m_ScreenMatchMode: 0
   m_MatchWidthOrHeight: 0
@@ -1671,11 +1671,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5082599161360283335, guid: 038d689bea07b0147807690dd996f133, type: 3}
       propertyPath: m_LocalScale.x
-      value: 0.8
+      value: 0.798
       objectReference: {fileID: 0}
     - target: {fileID: 5082599161360283335, guid: 038d689bea07b0147807690dd996f133, type: 3}
       propertyPath: m_LocalScale.y
-      value: 0.8
+      value: 0.798
       objectReference: {fileID: 0}
     - target: {fileID: 5082599161360283335, guid: 038d689bea07b0147807690dd996f133, type: 3}
       propertyPath: m_LocalScale.z
