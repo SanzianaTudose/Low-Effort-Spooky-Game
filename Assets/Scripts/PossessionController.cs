@@ -9,6 +9,8 @@ public class PossessionController : MonoBehaviour
     [SerializeField] Sprite defaultSprite;
     List<GameObject> objectsWithinRange = new List<GameObject>();
 
+    public GameObject spawner;
+
     //Make sure the ghost does not have any NPC within detection radius at start
     private int detectionCounter = 0;
     private bool ableToPosses = false;
@@ -17,6 +19,8 @@ public class PossessionController : MonoBehaviour
     private bool needFirstHighlight = true;
     private GameObject highlightClosest;
     private GameObject lastPossessed;
+
+    private bool spawnedAgain = false;
 
     // Start is called before the first frame update
     void Start()
@@ -92,6 +96,7 @@ public class PossessionController : MonoBehaviour
         //Escape the current possession
         if (Input.GetKeyDown("q") && possessing)
         {
+            spawnedAgain = false;
             /*
             1. Set possessing to false
             2. Move lastPossessed npc to player's location
@@ -100,11 +105,31 @@ public class PossessionController : MonoBehaviour
             5. Enable the highlight for the current closest target if ableToPosses
             6. Enable lastPossessed npc's AI
             */
-            
+
+            /* 
+               I check if the NPC's collider touches some other collider
+               If it does, generate a new random location and check again
+            */
+            while (!spawnedAgain)
+            {
+                Vector2 randPosition = new Vector2(Random.Range(-30.0f, 8.8f), Random.Range(-19.0f, 6.0f));
+                lastPossessed.transform.position = randPosition;
+
+                if (!Physics2D.OverlapCircle(lastPossessed.transform.position, 1f))
+                {
+                    Debug.Log("Nothing Touches b");
+                    spawnedAgain = true;
+                }
+                else if (Physics2D.OverlapCircle(lastPossessed.transform.position, 1f))
+                {
+                    Debug.Log("Something touches");
+                }
+            }
+
             possessing = false;
 
             // change the position to a random place
-            lastPossessed.transform.position = gameObject.transform.position;
+            //lastPossessed.transform.position = gameObject.transform.position;
 
             lastPossessed.GetComponent<BoxCollider2D>().enabled = true;
 
