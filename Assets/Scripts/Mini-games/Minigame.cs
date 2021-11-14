@@ -43,8 +43,7 @@ public class Minigame : MonoBehaviour
 
     public virtual void EndGame() {
         minigameRunning = false;
-        Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto); ;
-        StartCoroutine(DisableMinigameAfterSeconds(1f));
+        StartCoroutine(DisableMinigameAfterSeconds(2f));
     }
 
     IEnumerator DisableMinigameAfterSeconds(float sec) {

@@ -38,7 +38,6 @@ public class MinigameController : MonoBehaviour
     }
 
     public void startIntro(Minigame minigameToStart) {
-        // TODO: stop PlayerInput here
         curMinigame = minigameToStart;
 
         // Show introduction

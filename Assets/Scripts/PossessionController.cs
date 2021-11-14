@@ -128,11 +128,16 @@ public class PossessionController : MonoBehaviour
     private void TriggerMinigame() {
         NPCMinigame npcMinigame = highlightClosest.GetComponent<NPCMinigame>();
         if (npcMinigame == null) // NPC doesn't have an NPCMinigame component 
-            return;
+            StartPossession(); // just posses without any minigame
+
+        // Disable player movement and NPC Movement
+        GetComponent<PlayerMovement>().enabled = false;
+        highlightClosest.GetComponent<NPCMovement>().enabled = false;
 
         Minigame minigame = npcMinigame.minigame;
         minigameController.startIntro(minigame);
         StartCoroutine(WaitForMinigameEnd(minigame));
+        
     }
 
     IEnumerator WaitForMinigameEnd(Minigame minigame) {
@@ -140,8 +145,12 @@ public class PossessionController : MonoBehaviour
             yield return null;
 
         if (minigame.minigameState == 1)
-            StartCoroutine(StartPossessionAfterSeconds(2f));
+            StartCoroutine(StartPossessionAfterSeconds(2.5f));
+        
         minigame.minigameState = -1;
+        // Enable player movement and NPC Movement
+        GetComponent<PlayerMovement>().enabled = true;
+        highlightClosest.GetComponent<NPCMovement>().enabled = true;
     }
 
     IEnumerator StartPossessionAfterSeconds(float sec) {
