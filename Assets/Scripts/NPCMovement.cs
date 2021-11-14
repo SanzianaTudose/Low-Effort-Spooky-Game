@@ -18,8 +18,12 @@ public class NPCMovement : MonoBehaviour
 
     private Vector3 curMoveDir;
 
+    private SpriteRenderer srNPC;
+
     private void Start() {
         anim = GetComponent<Animator>();
+
+        srNPC = gameObject.transform.GetChild(0).gameObject.GetComponent<SpriteRenderer>();
 
         moveSpeed = Random.Range(moveSpeedRange.x, moveSpeedRange.y);
     }
@@ -74,6 +78,8 @@ public class NPCMovement : MonoBehaviour
         facingRight = !facingRight;
 
         transform.Rotate(0f, 180f, 0f);
+
+        if(srNPC.flipX) { srNPC.flipX = false; } else { srNPC.flipX = true; }
     }
 
     void AnimateNPC()

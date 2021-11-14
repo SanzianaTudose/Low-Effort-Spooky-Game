@@ -1,24 +1,30 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 public class PossessionController : MonoBehaviour
 {
     [SerializeField] MinigameController minigameController;
+    [SerializeField] Tilemap tilemap;
     [SerializeField] Sprite possessedSprite;
     [SerializeField] Sprite defaultSprite;
+    [SerializeField] GameObject prefabDoorPopup;
+    [SerializeField] GameObject gridFolder;
     List<GameObject> objectsWithinRange = new List<GameObject>();
 
     public GameObject spawner;
 
     //Make sure the ghost does not have any NPC within detection radius at start
     private int detectionCounter = 0;
+    private int doorDetectionCounter = 0;
     private bool ableToPosses = false;
     private bool cleanUp = false;
     private bool possessing = false;
     private bool needFirstHighlight = true;
     private GameObject highlightClosest;
     private GameObject lastPossessed;
+    private GameObject chosenDoorPopup;
 
     private bool spawnedAgain = false;
 
@@ -90,7 +96,52 @@ public class PossessionController : MonoBehaviour
             }
 
             if (Input.GetKeyDown("e") && !possessing)
+            {
+                /*
+                Once we posses someone we want to still
+                keep track of everything but not give the
+                player the chance to highlight or posses
+                anyone else.
+
+                1. Set possessing to true
+                2. Disable player's sprite
+                3. Disable AI of npc
+                4. Move player to location of chosen target
+                5. Copy target's sprite (possessed version)
+                6. Disable sprite of npc
+                7. Change sprite to possessed sprite
+                8. Disable current highlight
+                9. Store the target as lastPossessed
+                */
+
+                possessing = true;
+
+                gameObject.GetComponent<SpriteRenderer>().enabled = false;
+
+                highlightClosest.GetComponent<NPCMovement>().enabled = false;
+
+                highlightClosest.GetComponent<BoxCollider2D>().enabled = false;
+                gameObject.transform.position = highlightClosest.gameObject.transform.position;
+
+                /*
+                This is a temporary solution!
+                A possible way of implementing sprite specific stuff
+                is making use of a switch case based on a property of the target
+                for example: public int variable.
+                */
+                gameObject.GetComponent<SpriteRenderer>().sprite = possessedSprite;
+
+                highlightClosest.GetComponent<SpriteRenderer>().enabled = false;
+
+                gameObject.GetComponent<SpriteRenderer>().enabled = true;
+
+                highlightClosest.transform.GetChild(0).GetComponent<SpriteRenderer>().enabled = false;
+
+                lastPossessed = highlightClosest;
+
+                //if (Input.GetKeyDown("e") && !possessing)
                 TriggerMinigame();
+            }
         }
 
         //Escape the current possession
@@ -148,11 +199,34 @@ public class PossessionController : MonoBehaviour
             lastPossessed.GetComponent<NPCMovement>().enabled = true;
 
         }
+
+        //Action while we are possessing someone
+        if (Input.GetKeyDown("e") && possessing)
+        {
+            /*
+            Once we have possessed someone and want to perform an action (e)
+            We can check if we have collided with the housedoor collider
+            If so we can start trick or treat function
+            */
+
+            if (doorDetectionCounter == 2)
+            {
+                Debug.Log("*Trick or Treat event*");
+                if (Random.Range(0, 100) < 30)
+                {
+                    Debug.Log("*TRICKED*");
+                }
+                else
+                {
+                    Debug.Log("*TREAT*");
+                }
+            }
+        }
     }
 
-    private void TriggerMinigame() {
+    void TriggerMinigame() {
         NPCMinigame npcMinigame = highlightClosest.GetComponent<NPCMinigame>();
-        if (npcMinigame == null) { // NPC doesn't have an NPCMinigame component 
+        if (npcMinigame == null || npcMinigame.minigame == null) { // NPC doesn't have an NPCMinigame component or minigame at all
             StartPossession(); // just posses without any minigame
             return;
         }
@@ -185,7 +259,7 @@ public class PossessionController : MonoBehaviour
         StartPossession();
     }
 
-    private void StartPossession() {
+    void StartPossession() {
         /*
         Once we posses someone we want to still
         keep track of everything but not give the
@@ -244,6 +318,50 @@ public class PossessionController : MonoBehaviour
             if(!objectsWithinRange.Contains(collision.gameObject)) {
                 objectsWithinRange.Add(collision.gameObject);
             }
+        } 
+        else if (collision.gameObject.tag == "HouseDoor") 
+        {
+            //Debug.Log("ENTER DOOR?");
+            //Set out door detection boolean to true
+            doorDetectionCounter += 1;
+
+            if (doorDetectionCounter == 2 && possessing)
+            {
+                //Position of collision
+                var own_location = transform.TransformPoint(collision.transform.position);
+
+                bool firstTileSeen = false;
+                float closestDistance = 100000;
+                Vector3 closestTilePos = new Vector3();
+
+                //Figure out the closest Tile Position
+                foreach (var position in tilemap.cellBounds.allPositionsWithin)
+                {
+                    if (tilemap.HasTile(position))
+                    {
+                        if (!firstTileSeen){
+                            firstTileSeen = true;
+                            closestDistance = Vector3.Distance(position, own_location);
+                            closestTilePos = position;
+                        } else {
+                            if (Vector3.Distance(position, own_location) < closestDistance){
+                                closestDistance = Vector3.Distance(position, own_location);
+                                closestTilePos = position;
+                            }
+                        }
+                    }
+                }
+
+                Vector3 popupPos = new Vector3(closestTilePos.x+0.5f, closestTilePos.y+1.7f, closestTilePos.z);
+                
+                chosenDoorPopup = Instantiate(prefabDoorPopup, popupPos, Quaternion.identity);
+                chosenDoorPopup.name = $"Popup Door";
+                chosenDoorPopup.transform.parent = gridFolder.transform;
+
+                
+            }
+            //Add gameobject to our list (so we can track which one we are close to)
+            //Still to be implemented
         }
     }
 
@@ -270,6 +388,18 @@ public class PossessionController : MonoBehaviour
 
                 //We need to reset our need for a first highlight
                 needFirstHighlight = true;
+            }
+        }
+        else if (collision.gameObject.tag == "HouseDoor") 
+        {
+            //Debug.Log("LEAVE DOOR?");
+            //Keep track of doors detected with our 2 colliders
+            doorDetectionCounter -= 1;
+            //remove gameobject to our list (so we can track which one we are close to)
+            //Still to be implemented
+            if (doorDetectionCounter == 1)
+            {
+                Destroy(chosenDoorPopup);
             }
         }
     }
