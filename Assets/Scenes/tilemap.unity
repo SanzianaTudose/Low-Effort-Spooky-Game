@@ -3271,9 +3271,6 @@ MonoBehaviour:
   - {fileID: 668206784103866807, guid: 1f4de27f796dfe747a4c899b26465eff, type: 3}
   - {fileID: 893440326312888320, guid: 9c6a70e152216b34b80475e3712c3d94, type: 3}
   - {fileID: 4168016079400144094, guid: 6c7e38a896758f9418f2e57332f98703, type: 3}
-  mask:
-    serializedVersion: 2
-    m_Bits: 16
 --- !u!4 &469587451 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2019430082222195546, guid: 5bdae8b961e596d43b5371b22e0ea0fe, type: 3}
