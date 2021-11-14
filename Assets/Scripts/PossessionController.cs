@@ -22,6 +22,8 @@ public class PossessionController : MonoBehaviour
     private Animator bobAnimator;
     private Animator ghostAnimator;
     private Animator temp;
+    public ParticleSystem possession;
+
 
     private bool spawnedAgain = false;
 
@@ -99,6 +101,7 @@ public class PossessionController : MonoBehaviour
         //Escape the current possession
         if (Input.GetKeyDown("q") && possessing)
         {
+            StopParticles();
             spawnedAgain = false;
             /*
             1. Set possessing to false
@@ -224,6 +227,9 @@ public class PossessionController : MonoBehaviour
 
         bobAnimator = highlightClosest.GetComponent<Animator>();
 
+        CreateParticles();
+
+
         //temp = this.GetComponent<Animator>();
         //temp.runtimeAnimatorController = ghostAnimator.runtimeAnimatorController;
 
@@ -315,5 +321,15 @@ public class PossessionController : MonoBehaviour
             }
         }
         return tMin;
+    }
+
+    void CreateParticles()
+    {
+        possession.Play();
+    }
+
+    void StopParticles()
+    {
+        possession.Stop();
     }
 }

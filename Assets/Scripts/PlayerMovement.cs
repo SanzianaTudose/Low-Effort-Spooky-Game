@@ -8,6 +8,7 @@ public class PlayerMovement : MonoBehaviour
     public Rigidbody2D rb;
     public Animator animator;
 
+
     Vector2 movement;
     private bool facingRight = true;
 
@@ -48,4 +49,6 @@ public class PlayerMovement : MonoBehaviour
 
         transform.Rotate(0f, 180f, 0f);
     }
+
+    
 }
