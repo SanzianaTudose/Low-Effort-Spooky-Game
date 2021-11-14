@@ -155,12 +155,12 @@ public class PossessionController : MonoBehaviour
                 Vector2 randPosition = new Vector2(Random.Range(-30.0f, 8.8f), Random.Range(-19.0f, 6.0f));
                 lastPossessed.transform.position = randPosition;
 
-                if (!Physics2D.OverlapCircle(lastPossessed.transform.position, 2f))
+                if (!Physics2D.OverlapCircle(lastPossessed.transform.position, 1f))
                 {
                     Debug.Log("Nothing Touches b");
                     spawnedAgain = true;
                 }
-                else if (Physics2D.OverlapCircle(lastPossessed.transform.position, 2f))
+                else if (Physics2D.OverlapCircle(lastPossessed.transform.position, 1f))
                 {
                     Debug.Log("Something touches");
                 }
