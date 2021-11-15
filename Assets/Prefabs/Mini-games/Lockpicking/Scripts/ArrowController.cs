@@ -63,7 +63,7 @@ public class ArrowController : Minigame
         Then set its name + parent and add it to the list.
         */
         
-        liveCount = 3;
+        
         lives.text = $"Lives: {liveCount}";
         countdown.text = "";
         roundinfo.text = "Round: 1/3";
@@ -133,6 +133,22 @@ public class ArrowController : Minigame
 
     public override void StartGame() {
         base.StartGame();
+        liveCount = 1;
+        lives.text = $"Lives: {liveCount}";
+        countdown.text = "";
+        roundinfo.text = "Round: 1/3";
+
+        //Enable all basic components
+        gameContainer.SetActive(true);
+        overlayPanelLocal.SetActive(true);
+        lives.enabled = true;
+        countdown.enabled = true;
+        roundinfo.enabled = false;
+        subsetGame.transform.GetChild(0).gameObject.GetComponent<Image>().enabled = true;
+        subsetGame.transform.GetChild(1).gameObject.GetComponent<Image>().enabled = true;
+        subsetGame.transform.GetChild(1).gameObject.transform.GetChild(0).gameObject.SetActive(true);
+        subsetGame.transform.GetChild(2).gameObject.SetActive(true);
+        backgroundTargets.enabled = true;
 
         //Set default color of background circle
         backgroundTargets.color = Color.HSVToRGB(.34f, .84f, .67f);
@@ -154,8 +170,8 @@ public class ArrowController : Minigame
         l3t3 = (l3t2 + Random.Range((11+1), (180-(11+1)))) % 360;
         Debug.Log($"Level 3: {l3t1} | {l3t2} | {l3t3}");
 
-        //Prepare level 1
-        prepareLevel1();
+        //Start with level 3 (play a single round)
+        prepareLevel3();
     }
 
     #endregion Initialization
@@ -315,6 +331,7 @@ public class ArrowController : Minigame
                     roundinfo.enabled = false;
                     lives.enabled = false;
                     countdown.text = "Loss!";
+                    ModifyTargets(l3prefabs, true);
                     CustomEndGame(false);
                 }
                 else
@@ -331,6 +348,9 @@ public class ArrowController : Minigame
         {
             if (kill) { Destroy(target); } else { target.SetActive(true); }
         }
+
+        if (kill)
+            prefabList.Clear();
     }
 
     public void CustomEndGame(bool wincon)
@@ -344,7 +364,7 @@ public class ArrowController : Minigame
         else
         {
             minigameState = 0;
-            StartCoroutine(DisableMinigameAfterSeconds(0f));
+            StartCoroutine(DisableMinigameAfterSeconds(2f));
         }
     }
 

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using TMPro;    
 
@@ -21,17 +22,21 @@ public class PlaytimeScript : MonoBehaviour
     public bool gamePaused = false;
     public bool pauseDisabled = false;
 
+    public bool getInput = true;
+
     public int candyScore = 0;
 
     // Start is called before the first frame update
     void Start()
     {
+        gameOver = false;
         playtime = playtimeSession;
         pauseButton.SetActive(true);
         pauseMenu.SetActive(false);
         resumeButton.SetActive(false);
         retryButton.SetActive(false);
         playtimeTimer.text = GenerateClockText(Mathf.RoundToInt(playtime));
+        DeactivatePauseMenu();
     }
 
     // Update is called once per frame
@@ -51,11 +56,12 @@ public class PlaytimeScript : MonoBehaviour
                 if (newPlaytime != playtimeTimer.text)
                 { 
                     playtimeTimer.text = GenerateClockText(Mathf.RoundToInt(playtime));
-                    Debug.Log(playtimeTimer.text);
                 }
                 
             }
         }
+
+        if (!getInput) return;
 
         if (!pauseDisabled && !gamePaused)
         {
@@ -110,6 +116,7 @@ public class PlaytimeScript : MonoBehaviour
         pauseButton.SetActive(false);
         pauseMenu.SetActive(true);
         gamePaused = true;
+        Time.timeScale = 0;
     }
 
     private void DeactivatePauseMenu()
@@ -117,16 +124,11 @@ public class PlaytimeScript : MonoBehaviour
         pauseMenu.SetActive(false);
         gamePaused = false;
         pauseButton.SetActive(true);
+        Time.timeScale = 1;
     }
 
     private void RestartSession()
     {
-        gameOver = false;
-        playtime = playtimeSession;
-        pauseButton.SetActive(true);
-        resumeButton.SetActive(false);
-        retryButton.SetActive(false);
-        pauseMenu.SetActive(false);
-        playtimeTimer.text = GenerateClockText(Mathf.RoundToInt(playtime));
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 }

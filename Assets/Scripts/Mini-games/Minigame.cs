@@ -42,7 +42,6 @@ public class Minigame : MonoBehaviour
     }
 
     public virtual void EndGame() {
-        minigameRunning = false;
         StartCoroutine(DisableMinigameAfterSeconds(2f));
     }
 
@@ -52,5 +51,6 @@ public class Minigame : MonoBehaviour
         minigameContainer.SetActive(false);
         overlayPanel.SetActive(false);
         Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
+        minigameRunning = false;
     }
 }

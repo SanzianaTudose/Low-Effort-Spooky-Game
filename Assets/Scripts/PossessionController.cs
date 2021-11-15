@@ -190,6 +190,8 @@ public class PossessionController : MonoBehaviour
     }
 
     void TriggerMinigame() {
+        playtimescript.getInput = false;
+
         NPCMinigame npcMinigame = highlightClosest.GetComponent<NPCMinigame>();
         if (npcMinigame == null || npcMinigame.minigame == null) { // NPC doesn't have an NPCMinigame component or minigame at all
             StartPossession(); // just posses without any minigame
@@ -212,6 +214,8 @@ public class PossessionController : MonoBehaviour
         while (minigame.minigameState == -1)
             yield return null;
 
+        playtimescript.getInput = true;
+
         if (minigame.minigameState == 1)
         {
             minigame.minigameState = -1;
@@ -223,9 +227,7 @@ public class PossessionController : MonoBehaviour
             // Enable player movement and NPC Movement
             GetComponent<PlayerMovement>().enabled = true;
             highlightClosest.GetComponent<NPCMovement>().enabled = true;
-            // Enable pause and timer again
-            playtimescript.pauseDisabled = false;
-            playtimescript.gamePaused = false;
+            StartCoroutine(EnableTimerAfterSeconds(2f));
         }
     }
 
@@ -236,6 +238,13 @@ public class PossessionController : MonoBehaviour
 
         StartPossession();
         //Enable pause and timer again
+        playtimescript.pauseDisabled = false;
+        playtimescript.gamePaused = false;
+    }
+
+    IEnumerator EnableTimerAfterSeconds(float sec) {
+        yield return new WaitForSeconds(sec);
+        // Enable pause and timer again
         playtimescript.pauseDisabled = false;
         playtimescript.gamePaused = false;
     }
