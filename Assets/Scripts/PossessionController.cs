@@ -26,7 +26,7 @@ public class PossessionController : MonoBehaviour
     private GameObject highlightClosest;
     private GameObject lastPossessed;
     private GameObject chosenDoorPopup;
-
+    private bool minigameRunning = false;
     private bool spawnedAgain = false;
 
     // Start is called before the first frame update
@@ -96,8 +96,11 @@ public class PossessionController : MonoBehaviour
                 highlightClosest = GetClosestTarget(objectsWithinRange);
             }
 
-            if (Input.GetKeyDown("e") && !possessing)
+            if (Input.GetKeyDown("e") && !possessing && !minigameRunning)
             {
+                Debug.Log(highlightClosest.name);
+                //Let the script know we are in a minigame
+                minigameRunning = true;
                 //Make sure we can't cheat or get time deducted while in a minigame
                 playtimescript.pauseDisabled = true;
                 playtimescript.gamePaused = true;
@@ -194,6 +197,8 @@ public class PossessionController : MonoBehaviour
 
         NPCMinigame npcMinigame = highlightClosest.GetComponent<NPCMinigame>();
         if (npcMinigame == null || npcMinigame.minigame == null) { // NPC doesn't have an NPCMinigame component or minigame at all
+            //Let the script know we aren't in a minigame
+            minigameRunning = false;
             StartPossession(); // just posses without any minigame
             return;
         }
@@ -231,7 +236,8 @@ public class PossessionController : MonoBehaviour
         yield return new WaitForSeconds(sec);
         // Enable player movement
         GetComponent<PlayerMovement>().enabled = true;
-
+        //Let the script know we aren't in a minigame
+        minigameRunning = false;
         StartPossession();
         //Enable pause and timer again
         playtimescript.pauseDisabled = false;
@@ -240,6 +246,8 @@ public class PossessionController : MonoBehaviour
 
     IEnumerator EnableTimerAfterSeconds(float sec) {
         yield return new WaitForSeconds(sec);
+        //Let the script know we aren't in a minigame
+        minigameRunning = false;
         // Enable pause and timer again
         playtimescript.pauseDisabled = false;
         playtimescript.gamePaused = false;
