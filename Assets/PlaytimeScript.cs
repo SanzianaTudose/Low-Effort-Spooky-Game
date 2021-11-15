@@ -17,6 +17,8 @@ public class PlaytimeScript : MonoBehaviour
     [SerializeField] private GameObject resumeButton;
     [SerializeField] private GameObject retryButton;
     [SerializeField] private TextMeshProUGUI scoreText;
+    [SerializeField] private TextMeshProUGUI trickOrTreatText;
+    [SerializeField] private Animator trickOrTreatAnimator;
 
     [Header("Game Properties")]
     [SerializeField] private float playtimeSession = 0;
@@ -163,11 +165,19 @@ public class PlaytimeScript : MonoBehaviour
         if (amount < 0) {
             scoreText.color = Color.red;
             scoreText.text += " - " + Mathf.Abs(amount);
+
+            trickOrTreatText.text = "TRICK!";
+            trickOrTreatText.color = new Color32(162, 73, 73, 255);
+
         } else {
             scoreText.color = Color.green;
             scoreText.text += " + " + amount;
+
+            trickOrTreatText.text = "TREAT!";
+            trickOrTreatText.color = new Color32(73, 162, 73, 255);
         }
 
+        trickOrTreatAnimator.Play("TrickOrTreat");
         StartCoroutine(UpdateScoreText());
     }
 
