@@ -179,11 +179,13 @@ public class PossessionController : MonoBehaviour
                 {
                     Debug.Log("*TRICKED*");
                     playtimescript.candyScore -= 10;
+                    //TODO:update UI
                 }
                 else
                 {
                     Debug.Log("*TREAT*");
                     playtimescript.candyScore += 7;
+                    // TODO: update UI
                 }
             }
         }
