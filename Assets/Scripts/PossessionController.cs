@@ -11,6 +11,7 @@ public class PossessionController : MonoBehaviour
     [SerializeField] Sprite defaultSprite;
     [SerializeField] GameObject prefabDoorPopup;
     [SerializeField] GameObject gridFolder;
+    [SerializeField] PlaytimeScript playtimescript;
     List<GameObject> objectsWithinRange = new List<GameObject>();
 
     public GameObject spawner;
@@ -96,7 +97,13 @@ public class PossessionController : MonoBehaviour
             }
 
             if (Input.GetKeyDown("e") && !possessing)
+            {
+                //Make sure we can't cheat or get time deducted while in a minigame
+                playtimescript.pauseDisabled = true;
+                playtimescript.gamePaused = true;
+                //Trigger the minigame
                 TriggerMinigame();
+            }
             
         }
 
@@ -171,10 +178,12 @@ public class PossessionController : MonoBehaviour
                 if (Random.Range(0, 100) < 30)
                 {
                     Debug.Log("*TRICKED*");
+                    playtimescript.candyScore -= 10;
                 }
                 else
                 {
                     Debug.Log("*TREAT*");
+                    playtimescript.candyScore += 7;
                 }
             }
         }
@@ -214,6 +223,9 @@ public class PossessionController : MonoBehaviour
             // Enable player movement and NPC Movement
             GetComponent<PlayerMovement>().enabled = true;
             highlightClosest.GetComponent<NPCMovement>().enabled = true;
+            // Enable pause and timer again
+            playtimescript.pauseDisabled = false;
+            playtimescript.gamePaused = false;
         }
     }
 
@@ -223,6 +235,9 @@ public class PossessionController : MonoBehaviour
         GetComponent<PlayerMovement>().enabled = true;
 
         StartPossession();
+        //Enable pause and timer again
+        playtimescript.pauseDisabled = false;
+        playtimescript.gamePaused = false;
     }
 
     void StartPossession() {

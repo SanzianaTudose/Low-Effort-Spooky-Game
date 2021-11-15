@@ -69,6 +69,8 @@ public class ArrowController : Minigame
         roundinfo.text = "Round: 1/3";
 
         //Enable all basic components
+        gameContainer.SetActive(true);
+        overlayPanelLocal.SetActive(true);
         lives.enabled = true;
         countdown.enabled = true;
         roundinfo.enabled = true;
