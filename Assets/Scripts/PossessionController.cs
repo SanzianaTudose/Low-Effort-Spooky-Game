@@ -72,7 +72,7 @@ public class PossessionController : MonoBehaviour
                 if (!possessing)
                 {
                     //Enable highlight on this object (added sprite to npc (disabled on default))
-                    Debug.Log($"Enable highlight for {highlightClosest.name}");
+                   // Debug.Log($"Enable highlight for {highlightClosest.name}");
                     highlightClosest.transform.GetChild(0).GetComponent<SpriteRenderer>().enabled = true;
                 }
 
@@ -85,8 +85,8 @@ public class PossessionController : MonoBehaviour
                 if (!possessing)
                 {
                     //Disable highlight on old object and enable on new one
-                    Debug.Log($"Disable highlight for {highlightClosest.name}");
-                    Debug.Log($"Enable highlight for {GetClosestTarget(objectsWithinRange).name}");
+                   // Debug.Log($"Disable highlight for {highlightClosest.name}");
+                    //Debug.Log($"Enable highlight for {GetClosestTarget(objectsWithinRange).name}");
 
                     highlightClosest.transform.GetChild(0).GetComponent<SpriteRenderer>().enabled = false;
                     GetClosestTarget(objectsWithinRange).transform.GetChild(0).GetComponent<SpriteRenderer>().enabled = true;
@@ -198,6 +198,7 @@ public class PossessionController : MonoBehaviour
             return;
         }
 
+
         // Disable player movement and NPC Movement
         GetComponent<PlayerMovement>().enabled = false;
         highlightClosest.GetComponent<NPCMovement>().enabled = false;
@@ -211,19 +212,14 @@ public class PossessionController : MonoBehaviour
     }
 
     IEnumerator WaitForMinigameEnd(Minigame minigame) {
-        while (minigame.minigameState == -1)
+        while (minigameController.countdownRunning || minigame.minigameRunning)
             yield return null;
 
         playtimescript.getInput = true;
 
-        if (minigame.minigameState == 1)
-        {
-            minigame.minigameState = -1;
+        if (minigame.minigameState == 1) {
             StartCoroutine(StartPossessionAfterSeconds(2.5f));
-        }
-        else
-        {
-            minigame.minigameState = -1;
+        } else {
             // Enable player movement and NPC Movement
             GetComponent<PlayerMovement>().enabled = true;
             highlightClosest.GetComponent<NPCMovement>().enabled = true;
@@ -372,7 +368,7 @@ public class PossessionController : MonoBehaviour
                 if (!possessing)
                 {
                     //Disable highlight on previous object
-                    Debug.Log($"Disable highlight for {highlightClosest.name}");
+                   // Debug.Log($"Disable highlight for {highlightClosest.name}");
                     highlightClosest.transform.GetChild(0).GetComponent<SpriteRenderer>().enabled = false;
                 }
 

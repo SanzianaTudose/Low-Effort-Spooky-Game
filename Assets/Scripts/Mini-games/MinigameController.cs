@@ -15,7 +15,7 @@ public class MinigameController : MonoBehaviour
 
     Minigame curMinigame;
     private float countdownTimeRemaining;
-    private bool countdownRunning = false;
+    public bool countdownRunning = false;
 
     // Update is called once per frame
     void Update()

@@ -212,7 +212,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 01cfb6a59afbf4e459eb989edfdb8ac7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playtimeSession: 10
+  playtimeSession: 100
   playtimeTimer: {fileID: 1745777266}
   infoMiddle: {fileID: 312489927}
   infoTop: {fileID: 313889832}
@@ -124950,6 +124950,7 @@ MonoBehaviour:
   countdownText: {fileID: 1140603192}
   overlayPanel: {fileID: 223866359}
   countdownTime: 3
+  countdownRunning: 0
 --- !u!4 &1906988496
 Transform:
   m_ObjectHideFlags: 0
