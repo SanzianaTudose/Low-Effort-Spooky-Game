@@ -222,6 +222,7 @@ MonoBehaviour:
   retryButton: {fileID: 709117506}
   gamePaused: 0
   pauseDisabled: 0
+  getInput: 1
   candyScore: 0
 --- !u!1 &133186590
 GameObject:
@@ -112019,6 +112020,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1341825969, guid: 6c7e38a896758f9418f2e57332f98703, type: 3}
+      propertyPath: minigame
+      value: 
+      objectReference: {fileID: 8333613199566854130}
     - target: {fileID: 4168016079400144088, guid: 6c7e38a896758f9418f2e57332f98703, type: 3}
       propertyPath: m_RootOrder
       value: 3
@@ -123690,24 +123695,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &1341825962 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 4168016079400144094, guid: 6c7e38a896758f9418f2e57332f98703, type: 3}
-  m_PrefabInstance: {fileID: 775777763}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1341825969
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1341825962}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cf7d515cf62c5394e80c0b539c08cbcc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  minigame: {fileID: 8333613199566854130}
 --- !u!1001 &1375638948
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -123718,10 +123705,6 @@ PrefabInstance:
     - target: {fileID: 9150968469830385715, guid: 6e0e940d509f1c34b8614aa7b4db9785, type: 3}
       propertyPath: m_Name
       value: FlowerClickContainer
-      objectReference: {fileID: 0}
-    - target: {fileID: 9150968469830385715, guid: 6e0e940d509f1c34b8614aa7b4db9785, type: 3}
-      propertyPath: m_IsActive
-      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9150968469830385716, guid: 6e0e940d509f1c34b8614aa7b4db9785, type: 3}
       propertyPath: m_Pivot.x
@@ -124991,10 +124974,6 @@ PrefabInstance:
     - target: {fileID: 2019430082222195537, guid: 5bdae8b961e596d43b5371b22e0ea0fe, type: 3}
       propertyPath: m_Name
       value: Player
-      objectReference: {fileID: 0}
-    - target: {fileID: 2019430082222195542, guid: 5bdae8b961e596d43b5371b22e0ea0fe, type: 3}
-      propertyPath: moveSpeed
-      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 2019430082222195543, guid: 5bdae8b961e596d43b5371b22e0ea0fe, type: 3}
       propertyPath: tilemap
