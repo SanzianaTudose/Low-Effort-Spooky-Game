@@ -116,6 +116,8 @@ public class AimClickGameManager : Minigame
             minigameState = 1;
             EndGame();
         }
+
+        
     }
 
     // Referenced by the Event Trigger component on Button Image

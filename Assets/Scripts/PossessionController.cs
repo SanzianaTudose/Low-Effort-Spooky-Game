@@ -11,6 +11,7 @@ public class PossessionController : MonoBehaviour
     [SerializeField] Sprite defaultSprite;
     [SerializeField] GameObject prefabDoorPopup;
     [SerializeField] GameObject gridFolder;
+    [SerializeField] PlaytimeScript playtimescript;
     List<GameObject> objectsWithinRange = new List<GameObject>();
 
     public GameObject spawner;
@@ -71,7 +72,7 @@ public class PossessionController : MonoBehaviour
                 if (!possessing)
                 {
                     //Enable highlight on this object (added sprite to npc (disabled on default))
-                    Debug.Log($"Enable highlight for {highlightClosest.name}");
+                   // Debug.Log($"Enable highlight for {highlightClosest.name}");
                     highlightClosest.transform.GetChild(0).GetComponent<SpriteRenderer>().enabled = true;
                 }
 
@@ -84,8 +85,8 @@ public class PossessionController : MonoBehaviour
                 if (!possessing)
                 {
                     //Disable highlight on old object and enable on new one
-                    Debug.Log($"Disable highlight for {highlightClosest.name}");
-                    Debug.Log($"Enable highlight for {GetClosestTarget(objectsWithinRange).name}");
+                   // Debug.Log($"Disable highlight for {highlightClosest.name}");
+                    //Debug.Log($"Enable highlight for {GetClosestTarget(objectsWithinRange).name}");
 
                     highlightClosest.transform.GetChild(0).GetComponent<SpriteRenderer>().enabled = false;
                     GetClosestTarget(objectsWithinRange).transform.GetChild(0).GetComponent<SpriteRenderer>().enabled = true;
@@ -96,7 +97,13 @@ public class PossessionController : MonoBehaviour
             }
 
             if (Input.GetKeyDown("e") && !possessing)
+            {
+                //Make sure we can't cheat or get time deducted while in a minigame
+                playtimescript.pauseDisabled = true;
+                playtimescript.gamePaused = true;
+                //Trigger the minigame
                 TriggerMinigame();
+            }
             
         }
 
@@ -171,25 +178,32 @@ public class PossessionController : MonoBehaviour
                 if (Random.Range(0, 100) < 30)
                 {
                     Debug.Log("*TRICKED*");
+                    playtimescript.candyScore -= 10;
                 }
                 else
                 {
                     Debug.Log("*TREAT*");
+                    playtimescript.candyScore += 7;
                 }
             }
         }
     }
 
     void TriggerMinigame() {
+        playtimescript.getInput = false;
+
         NPCMinigame npcMinigame = highlightClosest.GetComponent<NPCMinigame>();
         if (npcMinigame == null || npcMinigame.minigame == null) { // NPC doesn't have an NPCMinigame component or minigame at all
             StartPossession(); // just posses without any minigame
             return;
         }
 
+
         // Disable player movement and NPC Movement
         GetComponent<PlayerMovement>().enabled = false;
         highlightClosest.GetComponent<NPCMovement>().enabled = false;
+        // Set pause animation for the NPC
+        highlightClosest.GetComponent<NPCMovement>().PauseAnimation();
 
         Minigame minigame = npcMinigame.minigame;
         minigameController.startIntro(minigame);
@@ -198,21 +212,37 @@ public class PossessionController : MonoBehaviour
     }
 
     IEnumerator WaitForMinigameEnd(Minigame minigame) {
-        while (minigame.minigameState == -1)
+        while (minigameController.countdownRunning || minigame.minigameRunning)
             yield return null;
 
-        if (minigame.minigameState == 1)
-            StartCoroutine(StartPossessionAfterSeconds(2.5f));
+        playtimescript.getInput = true;
 
-        minigame.minigameState = -1;
-        // Enable player movement and NPC Movement
-        GetComponent<PlayerMovement>().enabled = true;
-        highlightClosest.GetComponent<NPCMovement>().enabled = true;
+        if (minigame.minigameState == 1) {
+            StartCoroutine(StartPossessionAfterSeconds(2.5f));
+        } else {
+            // Enable player movement and NPC Movement
+            GetComponent<PlayerMovement>().enabled = true;
+            highlightClosest.GetComponent<NPCMovement>().enabled = true;
+            StartCoroutine(EnableTimerAfterSeconds(2f));
+        }
     }
 
     IEnumerator StartPossessionAfterSeconds(float sec) {
         yield return new WaitForSeconds(sec);
+        // Enable player movement
+        GetComponent<PlayerMovement>().enabled = true;
+
         StartPossession();
+        //Enable pause and timer again
+        playtimescript.pauseDisabled = false;
+        playtimescript.gamePaused = false;
+    }
+
+    IEnumerator EnableTimerAfterSeconds(float sec) {
+        yield return new WaitForSeconds(sec);
+        // Enable pause and timer again
+        playtimescript.pauseDisabled = false;
+        playtimescript.gamePaused = false;
     }
 
     void StartPossession() {
@@ -237,7 +267,7 @@ public class PossessionController : MonoBehaviour
 
         gameObject.GetComponent<SpriteRenderer>().enabled = false;
 
-        highlightClosest.GetComponent<NPCMovement>().enabled = false;
+        //highlightClosest.GetComponent<NPCMovement>().enabled = false;
 
         highlightClosest.GetComponent<BoxCollider2D>().enabled = false;
         gameObject.transform.position = highlightClosest.gameObject.transform.position;
@@ -338,7 +368,7 @@ public class PossessionController : MonoBehaviour
                 if (!possessing)
                 {
                     //Disable highlight on previous object
-                    Debug.Log($"Disable highlight for {highlightClosest.name}");
+                   // Debug.Log($"Disable highlight for {highlightClosest.name}");
                     highlightClosest.transform.GetChild(0).GetComponent<SpriteRenderer>().enabled = false;
                 }
 
