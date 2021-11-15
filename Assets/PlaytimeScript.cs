@@ -7,7 +7,7 @@ using TMPro;
 
 public class PlaytimeScript : MonoBehaviour
 {
-    [SerializeField] private float playtimeSession = 0;
+    
 
     [SerializeField] private TextMeshProUGUI playtimeTimer;
     [SerializeField] private TextMeshProUGUI infoMiddle;
@@ -16,6 +16,12 @@ public class PlaytimeScript : MonoBehaviour
     [SerializeField] private GameObject pauseButton;
     [SerializeField] private GameObject resumeButton;
     [SerializeField] private GameObject retryButton;
+    [SerializeField] private TextMeshProUGUI scoreText;
+
+    [Header("Game Properties")]
+    [SerializeField] private float playtimeSession = 0;
+    [SerializeField] private float trickProbability = 0.3f;
+    
 
     private bool gameOver = false;
     private float playtime;
@@ -130,5 +136,41 @@ public class PlaytimeScript : MonoBehaviour
     private void RestartSession()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+
+    public void OnHouseInteraction() {
+        // Determine if it's Trick or Treat
+        int amount = 0;
+        float trickOrTreat = Random.Range(0.0f, 1);
+        if (trickOrTreat <= trickProbability) {
+            // TRICK
+            amount = -5;
+        } else {
+            // TREAT
+            amount = Mathf.FloorToInt(Random.Range(5, 10));
+        }
+        print(trickOrTreat + " " + trickProbability);
+
+        candyScore += amount;
+        if (candyScore < 0)
+            candyScore = 0;
+
+        // Update UI - show text in red/green to give player feedback on outcome
+
+        if (amount < 0) {
+            scoreText.color = Color.red;
+            scoreText.text += " - " + Mathf.Abs(amount);
+        } else {
+            scoreText.color = Color.green;
+            scoreText.text += " + " + amount;
+        }
+
+        StartCoroutine(UpdateScoreText());
+    }
+
+    IEnumerator UpdateScoreText() {
+        yield return new WaitForSeconds(2f);
+        scoreText.text = "SCORE: " + candyScore;
+        scoreText.color = Color.white;
     }
 }

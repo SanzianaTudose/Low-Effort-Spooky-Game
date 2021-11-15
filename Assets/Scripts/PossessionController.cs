@@ -173,21 +173,7 @@ public class PossessionController : MonoBehaviour
             */
 
             if (doorDetectionCounter == 2)
-            {
-                Debug.Log("*Trick or Treat event*");
-                if (Random.Range(0, 100) < 30)
-                {
-                    Debug.Log("*TRICKED*");
-                    playtimescript.candyScore -= 10;
-                    //TODO:update UI
-                }
-                else
-                {
-                    Debug.Log("*TREAT*");
-                    playtimescript.candyScore += 7;
-                    // TODO: update UI
-                }
-            }
+                playtimescript.OnHouseInteraction();
         }
     }
 

@@ -122120,7 +122120,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Score:'
+  m_text: 'Score: 0'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 4c2a5ad065a795143ac2ad10fe1fafa5, type: 2}
   m_sharedMaterial: {fileID: -2223786066384585230, guid: 4c2a5ad065a795143ac2ad10fe1fafa5, type: 2}
@@ -126362,7 +126362,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 01cfb6a59afbf4e459eb989edfdb8ac7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playtimeSession: 100
   playtimeTimer: {fileID: 348061402}
   infoMiddle: {fileID: 2010874220}
   infoTop: {fileID: 1661674890}
@@ -126370,6 +126369,9 @@ MonoBehaviour:
   pauseButton: {fileID: 522558889}
   resumeButton: {fileID: 212263702}
   retryButton: {fileID: 1936108888}
+  scoreText: {fileID: 1546072521}
+  playtimeSession: 100
+  trickProbability: 0.3
   gamePaused: 0
   pauseDisabled: 0
   getInput: 1
