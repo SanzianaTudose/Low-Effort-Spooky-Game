@@ -31,7 +31,7 @@ public class PlaytimeScript : MonoBehaviour
     {
         gameOver = false;
         playtime = playtimeSession;
-        pauseButton.SetActive(true);
+        // pauseButton.SetActive(true);
         pauseMenu.SetActive(false);
         resumeButton.SetActive(false);
         retryButton.SetActive(false);
@@ -113,7 +113,7 @@ public class PlaytimeScript : MonoBehaviour
             resumeButton.SetActive(true);
             
         }
-        pauseButton.SetActive(false);
+        //pauseButton.SetActive(false);
         pauseMenu.SetActive(true);
         gamePaused = true;
         Time.timeScale = 0;
@@ -123,7 +123,7 @@ public class PlaytimeScript : MonoBehaviour
     {
         pauseMenu.SetActive(false);
         gamePaused = false;
-        pauseButton.SetActive(true);
+        // pauseButton.SetActive(true);
         Time.timeScale = 1;
     }
 
