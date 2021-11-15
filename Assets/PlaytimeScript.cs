@@ -29,6 +29,7 @@ public class PlaytimeScript : MonoBehaviour
     public bool pauseDisabled = false;
 
     public bool getInput = true;
+    private bool scoreIsUpdating = false;
 
     public int candyScore = 0;
 
@@ -139,6 +140,8 @@ public class PlaytimeScript : MonoBehaviour
     }
 
     public void OnHouseInteraction() {
+        if (scoreIsUpdating) return;
+
         // Determine if it's Trick or Treat
         int amount = 0;
         float trickOrTreat = Random.Range(0.0f, 1);
@@ -169,8 +172,10 @@ public class PlaytimeScript : MonoBehaviour
     }
 
     IEnumerator UpdateScoreText() {
+        scoreIsUpdating = true;
         yield return new WaitForSeconds(2f);
         scoreText.text = "SCORE: " + candyScore;
         scoreText.color = Color.white;
+        scoreIsUpdating = false;
     }
 }
