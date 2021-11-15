@@ -100,4 +100,9 @@ public class NPCMovement : MonoBehaviour
             anim.SetBool("IsWalking", false);
         }
     }
+
+    public void PauseAnimation()
+    {
+        anim.SetBool("IsWalking", false);
+    }
 }

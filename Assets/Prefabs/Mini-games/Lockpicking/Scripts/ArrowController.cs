@@ -2,26 +2,31 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
+using UnityEngine.EventSystems;
 
-public class ArrowController : MonoBehaviour
+public class ArrowController : Minigame
 {
-    [SerializeField] float degreesPerSecond = 5f;
-    [SerializeField] float rgbSpeed = 0.1f;
     [SerializeField] GameObject subsetGame;
     [SerializeField] GameObject rotationPointObj;
     [SerializeField] Image backgroundTargets;
     [SerializeField] Text countdown;
+    [SerializeField] Text lives;
     [SerializeField] Text roundinfo;
-    [SerializeField] Text instructions;
     [SerializeField] GameObject prefabBig;
     [SerializeField] GameObject prefabMedium;
     [SerializeField] GameObject prefabSmall;
+    [SerializeField] private GameObject overlayPanelLocal;
+    [SerializeField] private GameObject gameContainer;
+
+    [Header("Game Properties")]
+    [SerializeField] float degreesPerSecond = 5f;
+    [SerializeField] float rgbSpeed = 0.1f;
 
     private GameObject collidedTarget;
 
     private bool insideTarget = false;
-
-    private bool introSequence = true;
+    private int liveCount;
 
     //Integers that keep track of the amount of targets per level
     private int l1targets = 2;
@@ -43,54 +48,36 @@ public class ArrowController : MonoBehaviour
     private List<GameObject> l2prefabs = new List<GameObject>();
     private List<GameObject> l3prefabs = new List<GameObject>();
 
-    // Taking care of "animation" for starting timer
-    IEnumerator StartTimer()
+    public override void Update()
     {
-        while (introSequence) {
-            roundinfo.text = "Round: 1/3";
-            yield return new WaitForSeconds(2f);
-            countdown.text = "3";
-            countdown.fontSize = 200;
-            yield return new WaitForSeconds(0.5f);
-            countdown.text = "3";
-            countdown.fontSize = 250;
-            yield return new WaitForSeconds(0.5f);
-            countdown.text = "3";
-            countdown.fontSize = 300;
-            yield return new WaitForSeconds(0.5f);
-            countdown.text = "2";
-            countdown.fontSize = 200;
-            yield return new WaitForSeconds(0.5f);
-            countdown.text = "2";
-            countdown.fontSize = 250;
-            yield return new WaitForSeconds(0.5f);
-            countdown.text = "2";
-            countdown.fontSize = 300;
-            yield return new WaitForSeconds(0.5f);
-            countdown.text = "1";
-            countdown.fontSize = 200;
-            yield return new WaitForSeconds(0.5f);
-            countdown.text = "1";
-            countdown.fontSize = 250;
-            yield return new WaitForSeconds(0.5f);
-            countdown.text = "1";
-            countdown.fontSize = 300;
-            yield return new WaitForSeconds(1f);
-            countdown.text = "Start!";
-            countdown.fontSize = 200;
-            yield return new WaitForSeconds(0.5f);
-            countdown.text = "";
-            introSequence = false;
-        }
+        base.Update();
+
+        HandleGameStates();
     }
 
-    void prepareLevel1()
+    #region Initialization
+    private void prepareLevel1()
     {
         /*
         For each instantiated prefab, change rotation by previously computed random angle
         Then set its name + parent and add it to the list.
         */
         
+        liveCount = 3;
+        lives.text = $"Lives: {liveCount}";
+        countdown.text = "";
+        roundinfo.text = "Round: 1/3";
+
+        //Enable all basic components
+        lives.enabled = true;
+        countdown.enabled = true;
+        roundinfo.enabled = true;
+        subsetGame.transform.GetChild(0).gameObject.GetComponent<Image>().enabled = true;
+        subsetGame.transform.GetChild(1).gameObject.GetComponent<Image>().enabled = true;
+        subsetGame.transform.GetChild(1).gameObject.transform.GetChild(0).gameObject.SetActive(true);
+        subsetGame.transform.GetChild(2).gameObject.SetActive(true);
+        backgroundTargets.enabled = true;
+
         var prefabTarget = Instantiate(prefabBig, new Vector3(0,0,100), Quaternion.Euler(0,0,l1t1));
         prefabTarget.name = $"Big Target 1";
         prefabTarget.transform.SetParent(subsetGame.transform, false);
@@ -102,7 +89,7 @@ public class ArrowController : MonoBehaviour
         l1prefabs.Add(prefabTarget);
     }
 
-    void prepareLevel2()
+    private void prepareLevel2()
     {
         roundinfo.text = "Round: 2/3";
 
@@ -122,7 +109,7 @@ public class ArrowController : MonoBehaviour
         l2prefabs.Add(prefabTarget);
     }
 
-    void prepareLevel3()
+    private void prepareLevel3()
     {
         roundinfo.text = "Round: 3/3";
 
@@ -142,9 +129,9 @@ public class ArrowController : MonoBehaviour
         l3prefabs.Add(prefabTarget);
     }
 
+    public override void StartGame() {
+        base.StartGame();
 
-    void Start()
-    {
         //Set default color of background circle
         backgroundTargets.color = Color.HSVToRGB(.34f, .84f, .67f);
 
@@ -167,143 +154,202 @@ public class ArrowController : MonoBehaviour
 
         //Prepare level 1
         prepareLevel1();
-        
-        //Intro sequence
-        StartCoroutine (StartTimer ());
     }
+
+    #endregion Initialization
 
     // Update is called once per frame
-    void Update()
+    private void HandleGameStates()
     {
-        if (!introSequence)
-        {
-            if (Input.GetKeyDown("space"))
-            {
-                switch(roundinfo.text)
-                {
-                    case "Round: 1/3":
-                        if (insideTarget)
-                        {
-                            Debug.Log("YES");
-                            collidedTarget.SetActive(false);
-                            l1targets -= 1;
+        //Decide what happens if you hit or miss
+        if (Input.GetKeyDown("space")) { LevelManager(roundinfo.text); }
 
-                            if (l1targets == 0)
-                            {
-                                Debug.Log("completed level 1");
-                                //Destroy all targets from level 1
-                                foreach (var target in l1prefabs)
-                                {
-                                    Destroy(target);
-                                }
-                                //Flip direction arrow
-                                degreesPerSecond *= -1;
-                                //Prepare level 2
-                                prepareLevel2();
-                            }
-                        } else {
-                            Debug.Log("NO");
-                            //Enable both targets
-                            foreach (var target in l1prefabs)
-                            {
-                                target.SetActive(true);
-                            }
-                            l1targets = 2;
-                        }
-                        break;
-                    case "Round: 2/3":
-                        if (insideTarget)
-                        {
-                            Debug.Log("YES");
-                            collidedTarget.SetActive(false);
-                            l2targets -= 1;
+        //Keep rotating the arrow around its center point
+        transform.RotateAround(rotationPointObj.transform.position, Vector3.back, degreesPerSecond * Time.deltaTime);
 
-                            if (l2targets == 0)
-                            {
-                                Debug.Log("completed level 2");
-                                //Destroy all targets from level 2
-                                foreach (var target in l2prefabs)
-                                {
-                                    Destroy(target);
-                                }
-                                //Flip direction arrow
-                                degreesPerSecond *= -1;
-                                //Prepare level 3
-                                prepareLevel3();
-                            }
-                        } else {
-                            Debug.Log("NO");
-                            //Enable all targets
-                            foreach (var target in l2prefabs)
-                            {
-                                target.SetActive(true);
-                            }
-                            l2targets = 3;
-                        }
-                        break;
-                    case "Round: 3/3":
-                        if (insideTarget)
-                        {
-                            Debug.Log("YES");
-                            collidedTarget.SetActive(false);
-                            l3targets -= 1;
-
-                            if (l3targets == 0)
-                            {
-                                Debug.Log("completed level 3");
-                                //Destroy all targets from level 3
-                                foreach (var target in l3prefabs)
-                                {
-                                    Destroy(target);
-                                }
-                                //Victory screen?
-                                Debug.Log("VICTORY");
-                                subsetGame.transform.GetChild(0).gameObject.GetComponent<Image>().enabled = false;
-                                subsetGame.transform.GetChild(1).gameObject.GetComponent<Image>().enabled = false;
-                                subsetGame.transform.GetChild(1).gameObject.transform.GetChild(0).gameObject.SetActive(false);
-                                subsetGame.transform.GetChild(2).gameObject.SetActive(false);
-                                backgroundTargets.enabled = false;
-                                roundinfo.text = "Victory";
-                                roundinfo.enabled = false;
-                                countdown.text = "Victory!";
-                                
-                            }
-                        } else {
-                            Debug.Log("NO");
-                            //Enable all targets
-                            foreach (var target in l3prefabs)
-                            {
-                                target.SetActive(true);
-                            }
-                            l3targets = 3;
-                        }
-                        break;
-                    case "Victory":
-                        /*
-                        Here you can put the scene loader code to
-                        transition to the next part of the game
-                        */
-                        Debug.Log("Now you should be transported to the next part!");
-                        break;
-                }
-            }
-
-            transform.RotateAround(rotationPointObj.transform.position, Vector3.back, degreesPerSecond * Time.deltaTime);
-
-            float h, s, v;
-            Color.RGBToHSV(backgroundTargets.color, out h, out s, out v);
-            backgroundTargets.color = Color.HSVToRGB(h + Time.deltaTime * rgbSpeed, s, v);
-        }
+        //Keep shifting the hue of the background ring
+        float h, s, v;
+        Color.RGBToHSV(backgroundTargets.color, out h, out s, out v);
+        backgroundTargets.color = Color.HSVToRGB(h + Time.deltaTime * rgbSpeed, s, v);
     }
 
-    void OnTriggerEnter2D(Collider2D collision)
+    private void OnTriggerEnter2D(Collider2D collision)
     {
         insideTarget = true;
         collidedTarget = collision.gameObject;
     }
 
-    void OnTriggerExit2D(Collider2D collision)
+    private void OnTriggerExit2D(Collider2D collision)
     {
         insideTarget = false;
+    }
+
+    private void LevelManager(string category)
+    {
+        if (category == "Round: 1/3")
+        {
+            if (insideTarget)
+            {
+                Debug.Log("YES");
+                collidedTarget.SetActive(false);
+                l1targets -= 1;
+
+                if (l1targets == 0)
+                {
+                    Debug.Log("completed level 1");
+                    //Destroy all targets from level 1
+                    ModifyTargets(l1prefabs, true);
+                    //Flip direction arrow
+                    degreesPerSecond *= -1;
+                    //Prepare level 2
+                    prepareLevel2();
+                }
+            } else {
+                Debug.Log("NO");
+                //Enable both targets
+                ModifyTargets(l1prefabs, false);
+                //Reset the total amount
+                l1targets = 2;
+                //Decrease the liveCount by 1
+                liveCount -= 1;
+                //Check if you lost
+                if (liveCount == 0)
+                {
+                    Debug.Log("LOSSS");
+                    roundinfo.text = "Loss";
+                    roundinfo.enabled = false;
+                    lives.enabled = false;
+                    countdown.text = "Loss!";
+                    CustomEndGame(false);
+                }
+                else
+                {
+                    lives.text = $"Lives: {liveCount}";
+                }
+            }
+        }
+        else if (category == "Round: 2/3")
+        {
+            if (insideTarget)
+            {
+                Debug.Log("YES");
+                collidedTarget.SetActive(false);
+                l2targets -= 1;
+
+                if (l2targets == 0)
+                {
+                    Debug.Log("completed level 2");
+                    //Destroy all targets from level 2
+                    ModifyTargets(l2prefabs, true);
+                    //Flip direction arrow
+                    degreesPerSecond *= -1;
+                    //Prepare level 3
+                    prepareLevel3();
+                }
+            } else {
+                Debug.Log("NO");
+                //Enable all targets
+                ModifyTargets(l2prefabs, false);
+                //Reset the total amount
+                l2targets = 3;
+                //Decrease the liveCount by 1
+                liveCount -= 1;
+                //Check if you lost
+                if (liveCount == 0)
+                {
+                    Debug.Log("LOSSS");
+                    roundinfo.text = "Loss";
+                    roundinfo.enabled = false;
+                    lives.enabled = false;
+                    countdown.text = "Loss!";
+                    CustomEndGame(false);
+                }
+                else
+                {
+                    lives.text = $"Lives: {liveCount}";
+                }
+            }
+        }
+        else if (category == "Round: 3/3")
+        {
+            if (insideTarget)
+            {
+                Debug.Log("YES");
+                collidedTarget.SetActive(false);
+                l3targets -= 1;
+
+                if (l3targets == 0)
+                {
+                    Debug.Log("completed level 3");
+                    //Destroy all targets from level 3
+                    ModifyTargets(l3prefabs, true);
+                    //Disable all basic components
+                    subsetGame.transform.GetChild(0).gameObject.GetComponent<Image>().enabled = false;
+                    subsetGame.transform.GetChild(1).gameObject.GetComponent<Image>().enabled = false;
+                    subsetGame.transform.GetChild(1).gameObject.transform.GetChild(0).gameObject.SetActive(false);
+                    subsetGame.transform.GetChild(2).gameObject.SetActive(false);
+                    backgroundTargets.enabled = false;
+                    roundinfo.enabled = false;
+                    lives.enabled = false;
+                    //Win condition met so chan
+                    //roundinfo.text = "Victory";
+                    countdown.text = "Victory!";
+                    CustomEndGame(true);
+                    
+                }
+            } else {
+                Debug.Log("NO");
+                //Enable all targets
+                ModifyTargets(l3prefabs, false);
+                //Reset the total amount
+                l3targets = 3;
+                //Decrease the liveCount by 1
+                liveCount -= 1;
+                //Check if you lost
+                if (liveCount == 0)
+                {
+                    Debug.Log("LOSSS");
+                    roundinfo.text = "Loss";
+                    roundinfo.enabled = false;
+                    lives.enabled = false;
+                    countdown.text = "Loss!";
+                    CustomEndGame(false);
+                }
+                else
+                {
+                    lives.text = $"Lives: {liveCount}";
+                }
+            }
+        }
+    }
+
+    private void ModifyTargets(List<GameObject> prefabList, bool kill)
+    {
+        foreach (var target in prefabList)
+        {
+            if (kill) { Destroy(target); } else { target.SetActive(true); }
+        }
+    }
+
+    public void CustomEndGame(bool wincon)
+    {
+        minigameRunning = false;
+        if (wincon)
+        {
+            minigameState = 1;
+            StartCoroutine(DisableMinigameAfterSeconds(2f));
+        }
+        else
+        {
+            minigameState = 0;
+            StartCoroutine(DisableMinigameAfterSeconds(0f));
+        }
+    }
+
+    IEnumerator DisableMinigameAfterSeconds(float sec) {
+        yield return new WaitForSeconds(sec);
+        gameContainer.SetActive(false);
+        overlayPanelLocal.SetActive(false);
+        Cursor.SetCursor(null, Vector2.zero, CursorMode.Auto);
     }
 }

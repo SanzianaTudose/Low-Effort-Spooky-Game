@@ -190,6 +190,8 @@ public class PossessionController : MonoBehaviour
         // Disable player movement and NPC Movement
         GetComponent<PlayerMovement>().enabled = false;
         highlightClosest.GetComponent<NPCMovement>().enabled = false;
+        // Set pause animation for the NPC
+        highlightClosest.GetComponent<NPCMovement>().PauseAnimation();
 
         Minigame minigame = npcMinigame.minigame;
         minigameController.startIntro(minigame);
@@ -202,16 +204,24 @@ public class PossessionController : MonoBehaviour
             yield return null;
 
         if (minigame.minigameState == 1)
+        {
+            minigame.minigameState = -1;
             StartCoroutine(StartPossessionAfterSeconds(2.5f));
-
-        minigame.minigameState = -1;
-        // Enable player movement and NPC Movement
-        GetComponent<PlayerMovement>().enabled = true;
-        highlightClosest.GetComponent<NPCMovement>().enabled = true;
+        }
+        else
+        {
+            minigame.minigameState = -1;
+            // Enable player movement and NPC Movement
+            GetComponent<PlayerMovement>().enabled = true;
+            highlightClosest.GetComponent<NPCMovement>().enabled = true;
+        }
     }
 
     IEnumerator StartPossessionAfterSeconds(float sec) {
         yield return new WaitForSeconds(sec);
+        // Enable player movement
+        GetComponent<PlayerMovement>().enabled = true;
+
         StartPossession();
     }
 
@@ -237,7 +247,7 @@ public class PossessionController : MonoBehaviour
 
         gameObject.GetComponent<SpriteRenderer>().enabled = false;
 
-        highlightClosest.GetComponent<NPCMovement>().enabled = false;
+        //highlightClosest.GetComponent<NPCMovement>().enabled = false;
 
         highlightClosest.GetComponent<BoxCollider2D>().enabled = false;
         gameObject.transform.position = highlightClosest.gameObject.transform.position;
