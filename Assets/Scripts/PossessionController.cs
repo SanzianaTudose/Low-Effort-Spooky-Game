@@ -12,6 +12,7 @@ public class PossessionController : MonoBehaviour
     [SerializeField] GameObject prefabDoorPopup;
     [SerializeField] GameObject gridFolder;
     [SerializeField] PlaytimeScript playtimescript;
+    Dictionary<string,List<Vector3>> visitedPlaces = new Dictionary<string, List<Vector3>>();
     List<GameObject> objectsWithinRange = new List<GameObject>();
 
     public GameObject spawner;
@@ -27,13 +28,66 @@ public class PossessionController : MonoBehaviour
     private GameObject highlightClosest;
     private GameObject lastPossessed;
     private GameObject chosenDoorPopup;
-
     private bool spawnedAgain = false;
+    private Vector3 closestTilePos = new Vector3();
 
     // Start is called before the first frame update
     void Start()
     {
         
+    }
+
+    private void AddLocation(string npcKey, Vector3 location)
+    {
+        //Check if key already exists within the dictionary
+        if (!visitedPlaces.ContainsKey(npcKey))
+        {
+            Debug.Log($"New entry created for {npcKey}");
+            var locations = new List<Vector3>();
+            locations.Add(location);
+            visitedPlaces.Add(npcKey, locations);
+        }
+        else
+        {
+            //Only add the location if it does not already exist within the npc's location list
+            var locations = visitedPlaces[npcKey];
+            if (!locations.Contains(location))
+            {
+                Debug.Log($"Adding a location to {npcKey}");
+                locations.Add(location);
+                //Override previous locations list
+                visitedPlaces[npcKey] = locations;
+            }
+            else
+            {
+                Debug.Log($"Duplicate location!");
+            }
+            
+        }
+
+    }
+
+    private void ShowVisitedLocations()
+    {
+        foreach(var key in visitedPlaces.Keys)
+        {
+            foreach (var loc in visitedPlaces[key])
+            {
+                Debug.Log($"{key} visited -> {loc}");
+            }
+        }
+    }
+
+    private bool AlreadyVisited(string npcKey, Vector3 location)
+    {
+        if (visitedPlaces.ContainsKey(npcKey))
+        {
+            if (visitedPlaces[npcKey].Contains(location))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     // Update is called once per frame
@@ -99,6 +153,9 @@ public class PossessionController : MonoBehaviour
 
             if (Input.GetKeyDown("e") && !possessing && !minigameRunning)
             {
+                Debug.Log(highlightClosest.name);
+                //Let the script know we are in a minigame
+                minigameRunning = true;
                 //Make sure we can't cheat or get time deducted while in a minigame
                 playtimescript.pauseDisabled = true;
                 playtimescript.gamePaused = true;
@@ -174,8 +231,25 @@ public class PossessionController : MonoBehaviour
             If so we can start trick or treat function
             */
 
-            if (doorDetectionCounter == 2)
+            if (doorDetectionCounter == 2 && !AlreadyVisited(lastPossessed.name, closestTilePos))
             {
+
+                /*
+                //Functions relating to keeping track of visits
+
+                //Add that Lisa visited (1,2,3)
+                AddLocation("Lisa",new Vector3(1,2,3));
+
+                //Show all visited locations by each npc
+                ShowVisitedLocations();
+                
+                //Check if Jack already visited (1,2,3)
+                AlreadyVisited("Jack",new Vector3(1,2,3))
+                */
+
+                //Make sure we store the info that this location was visited
+                AddLocation(lastPossessed.name, closestTilePos);
+                
                 Debug.Log("*Trick or Treat event*");
                 if (Random.Range(0, 100) < 30)
                 {
@@ -196,6 +270,11 @@ public class PossessionController : MonoBehaviour
 
         NPCMinigame npcMinigame = highlightClosest.GetComponent<NPCMinigame>();
         if (npcMinigame == null || npcMinigame.minigame == null) { // NPC doesn't have an NPCMinigame component or minigame at all
+            //Let the script know we aren't in a minigame
+            minigameRunning = false;
+            //Resume timer and pause menu capabilities
+            playtimescript.pauseDisabled = false;
+            playtimescript.gamePaused = false;
             StartPossession(); // just posses without any minigame
             return;
         }
@@ -249,7 +328,8 @@ public class PossessionController : MonoBehaviour
         yield return new WaitForSeconds(sec);
         // Enable player movement
         GetComponent<PlayerMovement>().enabled = true;
-
+        //Let the script know we aren't in a minigame
+        minigameRunning = false;
         StartPossession();
         //Enable pause and timer again
         playtimescript.pauseDisabled = false;
@@ -258,6 +338,8 @@ public class PossessionController : MonoBehaviour
 
     IEnumerator EnableTimerAfterSeconds(float sec) {
         yield return new WaitForSeconds(sec);
+        //Let the script know we aren't in a minigame
+        minigameRunning = false;
         // Enable pause and timer again
         playtimescript.pauseDisabled = false;
         playtimescript.gamePaused = false;
@@ -336,7 +418,7 @@ public class PossessionController : MonoBehaviour
 
                 bool firstTileSeen = false;
                 float closestDistance = 100000;
-                Vector3 closestTilePos = new Vector3();
+                closestTilePos = new Vector3();
 
                 //Figure out the closest Tile Position
                 foreach (var position in tilemap.cellBounds.allPositionsWithin)
