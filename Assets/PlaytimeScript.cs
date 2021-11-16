@@ -7,7 +7,7 @@ using TMPro;
 
 public class PlaytimeScript : MonoBehaviour
 {
-    [SerializeField] private float playtimeSession = 0;
+    
 
     [SerializeField] private TextMeshProUGUI playtimeTimer;
     [SerializeField] private TextMeshProUGUI infoMiddle;
@@ -16,6 +16,14 @@ public class PlaytimeScript : MonoBehaviour
     [SerializeField] private GameObject pauseButton;
     [SerializeField] private GameObject resumeButton;
     [SerializeField] private GameObject retryButton;
+    [SerializeField] private TextMeshProUGUI scoreText;
+    [SerializeField] private TextMeshProUGUI trickOrTreatText;
+    [SerializeField] private Animator trickOrTreatAnimator;
+
+    [Header("Game Properties")]
+    [SerializeField] private float playtimeSession = 0;
+    [SerializeField] private float trickProbability = 0.3f;
+    
 
     private bool gameOver = false;
     private float playtime;
@@ -23,6 +31,7 @@ public class PlaytimeScript : MonoBehaviour
     public bool pauseDisabled = false;
 
     public bool getInput = true;
+    private bool scoreIsUpdating = false;
 
     public int candyScore = 0;
 
@@ -31,7 +40,7 @@ public class PlaytimeScript : MonoBehaviour
     {
         gameOver = false;
         playtime = playtimeSession;
-        pauseButton.SetActive(true);
+        // pauseButton.SetActive(true);
         pauseMenu.SetActive(false);
         resumeButton.SetActive(false);
         retryButton.SetActive(false);
@@ -113,7 +122,7 @@ public class PlaytimeScript : MonoBehaviour
             resumeButton.SetActive(true);
             
         }
-        pauseButton.SetActive(false);
+        //pauseButton.SetActive(false);
         pauseMenu.SetActive(true);
         gamePaused = true;
         Time.timeScale = 0;
@@ -123,12 +132,60 @@ public class PlaytimeScript : MonoBehaviour
     {
         pauseMenu.SetActive(false);
         gamePaused = false;
-        pauseButton.SetActive(true);
+        // pauseButton.SetActive(true);
         Time.timeScale = 1;
     }
 
     private void RestartSession()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
+
+    public void OnHouseInteraction() {
+        if (scoreIsUpdating) return;
+
+        // Determine if it's Trick or Treat
+        int amount = 0;
+        float trickOrTreat = Random.Range(0.0f, 1);
+        if (trickOrTreat <= trickProbability) {
+            // TRICK
+            amount = -5;
+        } else {
+            // TREAT
+            amount = Mathf.FloorToInt(Random.Range(5, 10));
+        }
+        print(trickOrTreat + " " + trickProbability);
+
+        candyScore += amount;
+        if (candyScore < 0)
+            candyScore = 0;
+
+        // Update UI - show text in red/green to give player feedback on outcome
+
+        if (amount < 0) {
+            scoreText.color = Color.red;
+            scoreText.text += " - " + Mathf.Abs(amount);
+
+            trickOrTreatText.text = "TRICK!";
+            trickOrTreatText.color = new Color32(162, 73, 73, 255);
+
+        } else {
+            scoreText.color = Color.green;
+            scoreText.text += " + " + amount;
+
+            trickOrTreatText.text = "TREAT!";
+            trickOrTreatText.color = new Color32(73, 162, 73, 255);
+        }
+
+        trickOrTreatAnimator.Play("TrickOrTreat");
+        StartCoroutine(UpdateScoreText());
+    }
+
+    IEnumerator UpdateScoreText() {
+        scoreIsUpdating = true;
+        yield return new WaitForSeconds(2f);
+        scoreText.text = "SCORE: " + candyScore;
+        scoreText.color = Color.white;
+        scoreIsUpdating = false;
     }
 }

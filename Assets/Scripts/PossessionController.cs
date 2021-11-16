@@ -231,36 +231,11 @@ public class PossessionController : MonoBehaviour
             If so we can start trick or treat function
             */
 
-            if (doorDetectionCounter == 2 && !AlreadyVisited(lastPossessed.name, closestTilePos))
-            {
-
-                /*
-                //Functions relating to keeping track of visits
-
-                //Add that Lisa visited (1,2,3)
-                AddLocation("Lisa",new Vector3(1,2,3));
-
-                //Show all visited locations by each npc
-                ShowVisitedLocations();
-                
-                //Check if Jack already visited (1,2,3)
-                AlreadyVisited("Jack",new Vector3(1,2,3))
-                */
-
+            if (doorDetectionCounter == 2 && !AlreadyVisited(lastPossessed.name, closestTilePos)) {
                 //Make sure we store the info that this location was visited
                 AddLocation(lastPossessed.name, closestTilePos);
-                
-                Debug.Log("*Trick or Treat event*");
-                if (Random.Range(0, 100) < 30)
-                {
-                    Debug.Log("*TRICKED*");
-                    playtimescript.candyScore -= 10;
-                }
-                else
-                {
-                    Debug.Log("*TREAT*");
-                    playtimescript.candyScore += 7;
-                }
+
+                playtimescript.OnHouseInteraction();
             }
         }
     }
@@ -438,11 +413,13 @@ public class PossessionController : MonoBehaviour
                     }
                 }
 
-                Vector3 popupPos = new Vector3(closestTilePos.x+0.5f, closestTilePos.y+1.7f, closestTilePos.z);
-                
-                chosenDoorPopup = Instantiate(prefabDoorPopup, popupPos, Quaternion.identity);
-                chosenDoorPopup.name = $"Popup Door";
-                chosenDoorPopup.transform.parent = gridFolder.transform;
+                if (!AlreadyVisited(lastPossessed.name, closestTilePos)) {
+                    Vector3 popupPos = new Vector3(closestTilePos.x + 0.5f, closestTilePos.y + 1.7f, closestTilePos.z);
+
+                    chosenDoorPopup = Instantiate(prefabDoorPopup, popupPos, Quaternion.identity);
+                    chosenDoorPopup.name = $"Popup Door";
+                    chosenDoorPopup.transform.parent = gridFolder.transform;
+                }
 
                 
             }
