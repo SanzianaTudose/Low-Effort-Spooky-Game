@@ -611,11 +611,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 893440326312888326, guid: 9c6a70e152216b34b80475e3712c3d94, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -11.453495
+      value: -7.16
       objectReference: {fileID: 0}
     - target: {fileID: 893440326312888326, guid: 9c6a70e152216b34b80475e3712c3d94, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.08456707
+      value: -3.35
       objectReference: {fileID: 0}
     - target: {fileID: 893440326312888326, guid: 9c6a70e152216b34b80475e3712c3d94, type: 3}
       propertyPath: m_LocalPosition.z
@@ -9801,10 +9801,6 @@ PrefabInstance:
       propertyPath: playtimescript
       value: 
       objectReference: {fileID: 899995276}
-    - target: {fileID: 2019430082222195543, guid: 5bdae8b961e596d43b5371b22e0ea0fe, type: 3}
-      propertyPath: doors.Array.size
-      value: 8
-      objectReference: {fileID: 0}
     - target: {fileID: 2019430082222195543, guid: 5bdae8b961e596d43b5371b22e0ea0fe, type: 3}
       propertyPath: minigameController
       value: 
@@ -128631,10 +128627,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 2572471347403759920, guid: 8c800db3f4bbc124d8494dbd90cde056, type: 3}
-      propertyPath: m_Sprite
-      value: 
-      objectReference: {fileID: -8206856380308958439, guid: 7ca3d5d8d3928e34fb43f796251a9fc4, type: 3}
     - target: {fileID: 2572471347403759921, guid: 8c800db3f4bbc124d8494dbd90cde056, type: 3}
       propertyPath: m_RootOrder
       value: 1
@@ -128687,9 +128679,5 @@ PrefabInstance:
       propertyPath: minigame
       value: 
       objectReference: {fileID: 1862457187}
-    - target: {fileID: 7439999127668818060, guid: 8c800db3f4bbc124d8494dbd90cde056, type: 3}
-      propertyPath: m_Controller
-      value: 
-      objectReference: {fileID: 9100000, guid: c6efad9293155fc47a58a31254980058, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8c800db3f4bbc124d8494dbd90cde056, type: 3}
