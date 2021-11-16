@@ -28,7 +28,6 @@ public class PossessionController : MonoBehaviour
     private GameObject highlightClosest;
     private GameObject lastPossessed;
     private GameObject chosenDoorPopup;
-    private bool minigameRunning = false;
     private bool spawnedAgain = false;
     private Vector3 closestTilePos = new Vector3();
 

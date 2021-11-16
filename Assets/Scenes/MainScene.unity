@@ -115943,7 +115943,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cf7d515cf62c5394e80c0b539c08cbcc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  minigame: {fileID: 0}
+  minigame: {fileID: 982358652}
 --- !u!1 &929015901
 GameObject:
   m_ObjectHideFlags: 0
@@ -123907,24 +123907,6 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 4149062450665673176, guid: 6a9a89e4c3aeee748acf551ad29fa9c3, type: 3}
   m_PrefabInstance: {fileID: 1140603190}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &1164545116 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 668206784103866807, guid: 1f4de27f796dfe747a4c899b26465eff, type: 3}
-  m_PrefabInstance: {fileID: 795394772}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1164545117
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1164545116}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cf7d515cf62c5394e80c0b539c08cbcc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  minigame: {fileID: 982358652}
 --- !u!1 &1167598279
 GameObject:
   m_ObjectHideFlags: 0
@@ -125748,8 +125730,8 @@ RectTransform:
   - {fileID: 1375638949}
   - {fileID: 982358651}
   - {fileID: 1140603191}
-  - {fileID: 341047756}
   - {fileID: 5938046794924775914}
+  - {fileID: 341047756}
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -128139,7 +128121,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8407989858906989479, guid: 74533fa5bd473c848931c07edcffb8ec, type: 3}
       propertyPath: m_RootOrder
-      value: 7
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 8407989858906989479, guid: 74533fa5bd473c848931c07edcffb8ec, type: 3}
       propertyPath: m_AnchorMax.x
