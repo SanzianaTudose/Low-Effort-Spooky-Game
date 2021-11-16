@@ -366,12 +366,14 @@ public class ArrowController : Minigame
             countdown.text = "Victory!";
             minigameState = 1;
             StartCoroutine(DisableMinigameAfterSeconds(2f));
+            EndGame();
         }
         else
         {
             countdown.text = "Loss!";
             minigameState = 0;
             StartCoroutine(DisableMinigameAfterSeconds(2f));
+            EndGame();
         }
     }
 
