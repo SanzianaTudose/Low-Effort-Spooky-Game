@@ -6,17 +6,16 @@ using TMPro;
 
 public class SpamGameManager : Minigame
 {
-    [Header("GameObject references")]
-    [SerializeField] private Image progress;
-    [SerializeField] private Image buttonImage;
-    [SerializeField] private int buttonShakeAmount = 5;
-
     [Header("Game Properties")]
     [SerializeField] private int clicks = 10;
     [SerializeField] private float time = 3f;
 
+    [Header("GameObject references & properties")]
+    [SerializeField] private Image progress;
+    [SerializeField] private Image buttonImage;
+    [SerializeField] private int buttonShakeAmount = 5;
+
     [SerializeField] private TextMeshProUGUI finalText;
-    [SerializeField] private GameObject titleScroll;
 
     // Canvas groups for different screens, used to hide and show game screens
     [SerializeField] private GameObject generalUICG;
@@ -52,9 +51,8 @@ public class SpamGameManager : Minigame
         initialButtonImagePos = buttonImage.transform.position;
         clicksRemaining = clicks;
 
-        // Initialize progress bar and open scroll
+        // Initialize progress bar
         progress.GetComponent<Image>().fillAmount = 0;
-        titleScroll.GetComponent<ScrollAnimationHandler>().OpenScroll();
     }
     #endregion
 
@@ -73,7 +71,6 @@ public class SpamGameManager : Minigame
         if (minigameRunning && timeRemaining <= 0)
         {
             minigameState = 0;
-            titleScroll.GetComponent<ScrollAnimationHandler>().CloseScroll();
             finalText.text = "Unfortunately, you lost :(";
             EndGame();
         }
@@ -98,7 +95,6 @@ public class SpamGameManager : Minigame
                 if (clicksRemaining == 0)
                 {
                     minigameState = 1;
-                    titleScroll.GetComponent<ScrollAnimationHandler>().CloseScroll();
                     finalText.text = "Congratulations, you won!";
 
                     EndGame();

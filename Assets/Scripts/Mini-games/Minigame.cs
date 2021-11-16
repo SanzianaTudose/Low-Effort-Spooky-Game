@@ -9,6 +9,7 @@ public class Minigame : MonoBehaviour
     [SerializeField] protected GameObject minigameContainer;
     [SerializeField] private TMP_Text timeText;
     [SerializeField] private GameObject overlayPanel;
+    [SerializeField] private GameObject titleScroll;
 
     public int minigameState = -1;
     public bool minigameRunning = false;
@@ -39,11 +40,17 @@ public class Minigame : MonoBehaviour
 
         minigameRunning = true;
         minigameContainer.SetActive(true);
+
+        // Open the title scroll
+        titleScroll.GetComponent<ScrollAnimationHandler>().OpenScroll();
     }
 
     public virtual void EndGame() {
         minigameRunning = false;
         StartCoroutine(DisableMinigameAfterSeconds(2f));
+
+        // Close the title scroll
+        titleScroll.GetComponent<ScrollAnimationHandler>().CloseScroll();
     }
 
     IEnumerator DisableMinigameAfterSeconds(float sec) {
