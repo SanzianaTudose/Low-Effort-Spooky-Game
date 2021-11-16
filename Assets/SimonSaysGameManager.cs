@@ -17,37 +17,68 @@ public class SimonSaysGameManager : MonoBehaviour
     [SerializeField] private Image dot3;
     [SerializeField] private Image dot4;
     [SerializeField] private Image dot5;
-    [SerializeField] private Transform keypadColors;
+    [SerializeField] private GameObject keypadColors;
+    [SerializeField] private GameObject topColors;
+    [SerializeField] private Text endText;
 
     private List<Image> dotList;
     private List<int> solution;
     private List<int> input;
+    private bool solutionSequence;
     // Start is called before the first frame update
     void Start()
     {
+        //Clear end text
+        endText.text = "";
+
         //Create the dot list
         dotList = new List<Image>{dot1,dot2,dot3,dot4,dot5};
 
         //Set the colors of the dots
         ResetDots();
 
+        //Set the colors of the buttons
+        for (int j = 1; j <= 6; j++)
+        {
+            keypadColors.transform.GetChild(j-1).gameObject.GetComponent<Image>().color = GetColor(0);
+        }
+
         //Create empty input list
         input = new List<int>();
 
         //Generate random solution
         solution = new List<int>{rc(),rc(),rc(),rc(),rc()};
-        
-        ///*Visualize the solution
-        for (int i = 1; i <= 5; i++ )
-        {
-            dotList[i-1].color = GetColor(solution[i-1]);
-        }
-        //*/
 
-        //Set the colors of the buttons
-        for (int j = 1; j <= 6; j++)
+        
+
+        ///*Visualize the solution
+        solutionSequence = true;
+        StartCoroutine(ShowSolution());
+        Debug.Log("AFTER SOLUTION IS SHOWN");
+        //*/
+        
+        
+    }
+
+    IEnumerator ShowSolution()
+    {
+        while (solutionSequence)
         {
-            keypadColors.GetChild(j-1).gameObject.GetComponent<Image>().color = GetColor(j);
+            yield return (new WaitForSeconds(0.5f));
+            for (int i = 1; i <= 5; i++ )
+            {
+                dotList[i-1].color = GetColor(solution[i-1]);
+                keypadColors.transform.GetChild(solution[i-1]-1).gameObject.GetComponent<Image>().color = GetColor(solution[i-1]);
+                yield return new WaitForSeconds(1.5f);
+                dotList[i-1].color = GetColor(0);
+                keypadColors.transform.GetChild(solution[i-1]-1).gameObject.GetComponent<Image>().color = GetColor(0);
+            }
+            //Set the colors of the buttons
+            for (int j = 1; j <= 6; j++)
+            {
+                keypadColors.transform.GetChild(j-1).gameObject.GetComponent<Image>().color = GetColor(j);
+            }
+            solutionSequence = false;
         }
     }
 
@@ -90,6 +121,7 @@ public class SimonSaysGameManager : MonoBehaviour
 
     public void SelectColor(int index)
     {
+        if (solutionSequence) { return; }
         Color selected = GetColor(index);
         Debug.Log(index);
         //input.Count is 0 if empty, if 5 it's full
@@ -103,10 +135,17 @@ public class SimonSaysGameManager : MonoBehaviour
             if (IsTheSame())
             {
                 Debug.Log("Victory");
+                keypadColors.SetActive(false);
+                topColors.SetActive(false);
+                endText.text = "Victory!";
+
             }
             else
             {
                 Debug.Log("Loss");
+                keypadColors.SetActive(false);
+                topColors.SetActive(false);
+                endText.text = "Loss!";
             }
         }
     }
