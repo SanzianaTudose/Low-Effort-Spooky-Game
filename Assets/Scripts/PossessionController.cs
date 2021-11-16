@@ -231,8 +231,12 @@ public class PossessionController : MonoBehaviour
             If so we can start trick or treat function
             */
 
-            if (doorDetectionCounter == 2)
+            if (doorDetectionCounter == 2 && !AlreadyVisited(lastPossessed.name, closestTilePos)) {
+                //Make sure we store the info that this location was visited
+                AddLocation(lastPossessed.name, closestTilePos);
+
                 playtimescript.OnHouseInteraction();
+            }
         }
     }
 
@@ -409,11 +413,13 @@ public class PossessionController : MonoBehaviour
                     }
                 }
 
-                Vector3 popupPos = new Vector3(closestTilePos.x+0.5f, closestTilePos.y+1.7f, closestTilePos.z);
-                
-                chosenDoorPopup = Instantiate(prefabDoorPopup, popupPos, Quaternion.identity);
-                chosenDoorPopup.name = $"Popup Door";
-                chosenDoorPopup.transform.parent = gridFolder.transform;
+                if (!AlreadyVisited(lastPossessed.name, closestTilePos)) {
+                    Vector3 popupPos = new Vector3(closestTilePos.x + 0.5f, closestTilePos.y + 1.7f, closestTilePos.z);
+
+                    chosenDoorPopup = Instantiate(prefabDoorPopup, popupPos, Quaternion.identity);
+                    chosenDoorPopup.name = $"Popup Door";
+                    chosenDoorPopup.transform.parent = gridFolder.transform;
+                }
 
                 
             }
