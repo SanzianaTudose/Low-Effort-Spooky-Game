@@ -14,7 +14,7 @@ public class AimClickGameManager : Minigame
 {
     [SerializeField] private GameObject playingContainer;
     [SerializeField] private GameObject circlePrefab;
-    [SerializeField] private List<Sprite> spriteList; 
+    [SerializeField] private List<Sprite> spriteList;
 
     [Header("Game Properties")]
     [SerializeField] private Vector2Int circleCountRange = new Vector2Int(3, 6);
@@ -43,7 +43,7 @@ public class AimClickGameManager : Minigame
         circlesClicked = 0;
         timeRemaining = timeLimit;
     }
-   
+
     private void CalculateSpawnBounds() {
         RectTransform containerRect = playingContainer.GetComponent<RectTransform>();
         RectTransform circleRect = circlePrefab.GetComponent<RectTransform>();
@@ -116,6 +116,8 @@ public class AimClickGameManager : Minigame
             minigameState = 1;
             EndGame();
         }
+
+        
     }
 
     // Referenced by the Event Trigger component on Button Image
@@ -127,4 +129,15 @@ public class AimClickGameManager : Minigame
         Destroy(curCircle);
     }
 
+    public override void EndGame() {
+        base.EndGame();
+
+        clearPlayContainer();
+    }
+
+    private void clearPlayContainer() {
+        foreach (Transform child in playingContainer.transform) {
+            Destroy(child.gameObject);
+        }
+    }
 }

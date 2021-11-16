@@ -4926,7 +4926,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 10e5c2d119e0a4743a23404125ddb614, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 2
+  moveSpeed: 4
   rb: {fileID: 2019430082222195540}
   animator: {fileID: 0}
 --- !u!114 &2019430082222195543
@@ -4942,8 +4942,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   minigameController: {fileID: 0}
+  tilemap: {fileID: 0}
   possessedSprite: {fileID: 21300000, guid: 79ae56b3330dad249aeb3489ca92fa1b, type: 3}
   defaultSprite: {fileID: 7482667652216324306, guid: 48e93eef0688c4a259cb0eddcd8661f7, type: 3}
+  prefabDoorPopup: {fileID: 3764495317940704561, guid: 490cfac3d2da5d04896684b74b598843, type: 3}
+  gridFolder: {fileID: 0}
+  playtimescript: {fileID: 0}
   spawner: {fileID: 0}
   possession: {fileID: 41988051}
 --- !u!58 &2019430082222195544
