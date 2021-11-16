@@ -243,7 +243,6 @@ public class PossessionController : MonoBehaviour
         ghostAnimator.runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>(dir);
 
 
-
         /*
         This is a temporary solution!
         A possible way of implementing sprite specific stuff
