@@ -13,6 +13,7 @@ public class ArrowController : Minigame
     [SerializeField] Text countdown;
     [SerializeField] Text lives;
     [SerializeField] Text roundinfo;
+    [SerializeField] TextMeshProUGUI bottomText;
     [SerializeField] GameObject prefabBig;
     [SerializeField] GameObject prefabMedium;
     [SerializeField] GameObject prefabSmall;
@@ -20,6 +21,7 @@ public class ArrowController : Minigame
     [SerializeField] private GameObject gameContainer;
 
     [Header("Game Properties")]
+    [SerializeField] int startGameWithLevel = 1;
     [SerializeField] float degreesPerSecond = 5f;
     [SerializeField] float rgbSpeed = 0.1f;
 
@@ -137,6 +139,7 @@ public class ArrowController : Minigame
         lives.text = $"Lives: {liveCount}";
         countdown.text = "";
         roundinfo.text = "Round: 1/3";
+        bottomText.enabled = true;
 
         //Enable all basic components
         gameContainer.SetActive(true);
@@ -171,7 +174,18 @@ public class ArrowController : Minigame
         Debug.Log($"Level 3: {l3t1} | {l3t2} | {l3t3}");
 
         //Start with level 3 (play a single round)
-        prepareLevel3();
+        switch(startGameWithLevel)
+        {
+            case (2):
+                prepareLevel2();
+                break;
+            case (3):
+                prepareLevel3();
+                break;
+            default:
+                prepareLevel1();
+                break;
+        }
     }
 
     #endregion Initialization
@@ -233,11 +247,8 @@ public class ArrowController : Minigame
                 //Check if you lost
                 if (liveCount == 0)
                 {
-                    Debug.Log("LOSSS");
-                    roundinfo.text = "Loss";
-                    roundinfo.enabled = false;
-                    lives.enabled = false;
-                    countdown.text = "Loss!";
+                    Debug.Log("Loss");
+                    ModifyTargets(l1prefabs, true);
                     CustomEndGame(false);
                 }
                 else
@@ -275,11 +286,8 @@ public class ArrowController : Minigame
                 //Check if you lost
                 if (liveCount == 0)
                 {
-                    Debug.Log("LOSSS");
-                    roundinfo.text = "Loss";
-                    roundinfo.enabled = false;
-                    lives.enabled = false;
-                    countdown.text = "Loss!";
+                    Debug.Log("Loss");
+                    ModifyTargets(l2prefabs, true);
                     CustomEndGame(false);
                 }
                 else
@@ -299,19 +307,6 @@ public class ArrowController : Minigame
                 if (l3targets == 0)
                 {
                     Debug.Log("completed level 3");
-                    //Destroy all targets from level 3
-                    ModifyTargets(l3prefabs, true);
-                    //Disable all basic components
-                    subsetGame.transform.GetChild(0).gameObject.GetComponent<Image>().enabled = false;
-                    subsetGame.transform.GetChild(1).gameObject.GetComponent<Image>().enabled = false;
-                    subsetGame.transform.GetChild(1).gameObject.transform.GetChild(0).gameObject.SetActive(false);
-                    subsetGame.transform.GetChild(2).gameObject.SetActive(false);
-                    backgroundTargets.enabled = false;
-                    roundinfo.enabled = false;
-                    lives.enabled = false;
-                    //Win condition met so chan
-                    //roundinfo.text = "Victory";
-                    countdown.text = "Victory!";
                     CustomEndGame(true);
                     
                 }
@@ -326,12 +321,7 @@ public class ArrowController : Minigame
                 //Check if you lost
                 if (liveCount == 0)
                 {
-                    Debug.Log("LOSSS");
-                    roundinfo.text = "Loss";
-                    roundinfo.enabled = false;
-                    lives.enabled = false;
-                    countdown.text = "Loss!";
-                    ModifyTargets(l3prefabs, true);
+                    Debug.Log("Loss");
                     CustomEndGame(false);
                 }
                 else
@@ -355,14 +345,29 @@ public class ArrowController : Minigame
 
     public void CustomEndGame(bool wincon)
     {
+        //Destroy all targets from level 3
+        ModifyTargets(l3prefabs, true);
+        //Disable all basic components
+        subsetGame.transform.GetChild(0).gameObject.GetComponent<Image>().enabled = false;
+        subsetGame.transform.GetChild(1).gameObject.GetComponent<Image>().enabled = false;
+        subsetGame.transform.GetChild(1).gameObject.transform.GetChild(0).gameObject.SetActive(false);
+        subsetGame.transform.GetChild(2).gameObject.SetActive(false);
+        backgroundTargets.enabled = false;
+        bottomText.enabled = false;
+        roundinfo.enabled = false;
+        lives.enabled = false;
+        //Let the script know the minigame is not running
         minigameRunning = false;
+
         if (wincon)
         {
+            countdown.text = "Victory!";
             minigameState = 1;
             StartCoroutine(DisableMinigameAfterSeconds(2f));
         }
         else
         {
+            countdown.text = "Loss!";
             minigameState = 0;
             StartCoroutine(DisableMinigameAfterSeconds(2f));
         }
