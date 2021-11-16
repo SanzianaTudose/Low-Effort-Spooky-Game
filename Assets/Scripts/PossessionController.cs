@@ -29,6 +29,10 @@ public class PossessionController : MonoBehaviour
     private GameObject lastPossessed;
     private Animator bobAnimator;
     private Animator ghostAnimator;
+
+    public GameObject door;
+    public GameObject[] doors;
+
     private Animator temp;
     public ParticleSystem possession;
 
@@ -182,6 +186,7 @@ public class PossessionController : MonoBehaviour
             /*
             Once we have possessed someone and want to perform an action (e)
             We can check if we have collided with the housedoor collider
+            We can check if we have collided with the housedoor collider
             If so we can start trick or treat function
             */
 
@@ -192,6 +197,11 @@ public class PossessionController : MonoBehaviour
                 int interactionOutcome = playtimescript.OnHouseInteraction();
                 if (interactionOutcome == 0) {
                     EndPossession();
+                }
+
+                for(int i = 0; i < doors.Length; i++)
+                {
+                    doors[i].GetComponent<Animator>().enabled = true;
                 }
             }
         }
