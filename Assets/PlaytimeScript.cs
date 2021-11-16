@@ -41,11 +41,10 @@ public class PlaytimeScript : MonoBehaviour
         gameOver = false;
         playtime = playtimeSession;
         // pauseButton.SetActive(true);
-        pauseMenu.SetActive(false);
         resumeButton.SetActive(false);
         retryButton.SetActive(false);
         playtimeTimer.text = GenerateClockText(Mathf.RoundToInt(playtime));
-        DeactivatePauseMenu();
+        ActivatePauseMenu();
     }
 
     // Update is called once per frame
@@ -117,7 +116,10 @@ public class PlaytimeScript : MonoBehaviour
         else
         {
             infoTop.text = "Pause Menu";
-            infoMiddle.text = "TIP: Use the hotkey \"p\" to quickly switch between the pause menu and gameplay.";
+            infoMiddle.text = "You've recently become a ghost. Since it's Halloween night, you want to get as many candies as possible. You can do so by possessing the people on the street and then going trick-or-treating." +
+                "\n\n CONTROLS: \n WASD - movement  E - interact  Q - stop possesion P -pause" +
+                "\n\n CREDITS: \n HochuPitsu - Pixel Bob; LimeZu - Serene Village (itch.io) \n peony - Plants & Flowers (opengameart.org)" +
+                "\n Pizzadude - ArcadeClassic font (1001fonts.com)";
             retryButton.SetActive(false);
             resumeButton.SetActive(true);
             
@@ -128,7 +130,7 @@ public class PlaytimeScript : MonoBehaviour
         Time.timeScale = 0;
     }
 
-    private void DeactivatePauseMenu()
+    public void DeactivatePauseMenu()
     {
         pauseMenu.SetActive(false);
         gamePaused = false;
@@ -136,13 +138,13 @@ public class PlaytimeScript : MonoBehaviour
         Time.timeScale = 1;
     }
 
-    private void RestartSession()
+    public void RestartSession()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
-    public void OnHouseInteraction() {
-        if (scoreIsUpdating) return;
+    public int OnHouseInteraction() {
+        if (scoreIsUpdating) return -1;
 
         // Determine if it's Trick or Treat
         int amount = 0;
@@ -179,6 +181,10 @@ public class PlaytimeScript : MonoBehaviour
 
         trickOrTreatAnimator.Play("TrickOrTreat");
         StartCoroutine(UpdateScoreText());
+
+        if (amount >= 0)
+            return 1;
+        return 0;
     }
 
     IEnumerator UpdateScoreText() {

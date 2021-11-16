@@ -178,62 +178,7 @@ public class PossessionController : MonoBehaviour
 
         //Escape the current possession
         if (Input.GetKeyDown("q") && possessing)
-        {
-            StopParticles();
-            spawnedAgain = false;
-            /*
-            1. Set possessing to false
-            2. Move lastPossessed npc to player's location
-            3. Enable lastPossessed npc's sprite
-            4. Change back to the default sprite
-            5. Enable the highlight for the current closest target if ableToPosses
-            6. Enable lastPossessed npc's AI
-            */
-
-            /* 
-               I check if the NPC's collider touches some other collider
-               If it does, generate a new random location and check again
-            */
-            while (!spawnedAgain)
-            {
-                Vector2 randPosition = new Vector2(Random.Range(-30.0f, 8.8f), Random.Range(-19.0f, 6.0f));
-                lastPossessed.transform.position = randPosition;
-
-                if (!Physics2D.OverlapCircle(lastPossessed.transform.position, 1f))
-                {
-                    Debug.Log("Nothing Touches b");
-                    spawnedAgain = true;
-                }
-                else if (Physics2D.OverlapCircle(lastPossessed.transform.position, 1f))
-                {
-                    Debug.Log("Something touches");
-                }
-            }
-
-            //return to the ghost its animator
-            ghostAnimator.runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>("Player");
-
-            possessing = false;
-
-            // change the position to a random place
-            //lastPossessed.transform.position = gameObject.transform.position;
-
-            lastPossessed.GetComponent<BoxCollider2D>().enabled = true;
-
-            lastPossessed.GetComponent<NPCMovement>().enabled = true;
-
-            lastPossessed.GetComponent<SpriteRenderer>().enabled = true;
-
-            gameObject.GetComponent<SpriteRenderer>().sprite = defaultSprite;
-
-
-            if (ableToPosses) {
-                highlightClosest.transform.GetChild(0).GetComponent<SpriteRenderer>().enabled = true;
-            }
-
-            lastPossessed.GetComponent<NPCMovement>().enabled = true;
-
-        }
+            EndPossession();
 
         //Action while we are possessing someone
         if (Input.GetKeyDown("e") && possessing)
@@ -249,13 +194,15 @@ public class PossessionController : MonoBehaviour
                 //Make sure we store the info that this location was visited
                 AddLocation(lastPossessed.name, closestTilePos);
 
+                int interactionOutcome = playtimescript.OnHouseInteraction();
+                if (interactionOutcome == 0) {
+                    EndPossession();
+                }
+
                 for(int i = 0; i < doors.Length; i++)
                 {
                     doors[i].GetComponent<Animator>().enabled = true;
                 }
-                //door.GetComponent<Animator>().enabled = true;
-
-                playtimescript.OnHouseInteraction();
             }
         }
     }
@@ -409,6 +356,58 @@ public class PossessionController : MonoBehaviour
 
         //Show the name of the target we will posses
         //Debug.Log($"Posses -> {GetClosestTarget(objectsWithinRange).name}");
+    }
+
+    void EndPossession() {
+        StopParticles();
+        spawnedAgain = false;
+        /*
+        1. Set possessing to false
+        2. Move lastPossessed npc to player's location
+        3. Enable lastPossessed npc's sprite
+        4. Change back to the default sprite
+        5. Enable the highlight for the current closest target if ableToPosses
+        6. Enable lastPossessed npc's AI
+        */
+
+        /* 
+           I check if the NPC's collider touches some other collider
+           If it does, generate a new random location and check again
+        */
+        while (!spawnedAgain) {
+            Vector2 randPosition = new Vector2(Random.Range(-30.0f, 8.8f), Random.Range(-19.0f, 6.0f));
+            lastPossessed.transform.position = randPosition;
+
+            if (!Physics2D.OverlapCircle(lastPossessed.transform.position, 1f)) {
+                Debug.Log("Nothing Touches b");
+                spawnedAgain = true;
+            } else if (Physics2D.OverlapCircle(lastPossessed.transform.position, 1f)) {
+                Debug.Log("Something touches");
+            }
+        }
+
+        //return to the ghost its animator
+        ghostAnimator.runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>("Player");
+
+        possessing = false;
+
+        // change the position to a random place
+        //lastPossessed.transform.position = gameObject.transform.position;
+
+        lastPossessed.GetComponent<BoxCollider2D>().enabled = true;
+
+        lastPossessed.GetComponent<NPCMovement>().enabled = true;
+
+        lastPossessed.GetComponent<SpriteRenderer>().enabled = true;
+
+        gameObject.GetComponent<SpriteRenderer>().sprite = defaultSprite;
+
+
+        if (ableToPosses) {
+            highlightClosest.transform.GetChild(0).GetComponent<SpriteRenderer>().enabled = true;
+        }
+
+        lastPossessed.GetComponent<NPCMovement>().enabled = true;
     }
 
     void OnTriggerEnter2D(Collider2D collision)
