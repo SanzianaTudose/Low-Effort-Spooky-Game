@@ -3,15 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class SimonSaysGameManager : MonoBehaviour
+public class SimonSaysGameManager : Minigame
 {
-    [SerializeField] private Color defaultColor;
-    [SerializeField] private Color button1Color;
-    [SerializeField] private Color button2Color;
-    [SerializeField] private Color button3Color;
-    [SerializeField] private Color button4Color;
-    [SerializeField] private Color button5Color;
-    [SerializeField] private Color button6Color;
     [SerializeField] private Image dot1;
     [SerializeField] private Image dot2;
     [SerializeField] private Image dot3;
@@ -21,15 +14,37 @@ public class SimonSaysGameManager : MonoBehaviour
     [SerializeField] private GameObject topColors;
     [SerializeField] private Text endText;
 
+    [Header("Game Properties")]
+    [SerializeField] private Color defaultColor;
+    [SerializeField] private Color button1Color;
+    [SerializeField] private Color button2Color;
+    [SerializeField] private Color button3Color;
+    [SerializeField] private Color button4Color;
+    [SerializeField] private Color button5Color;
+    [SerializeField] private Color button6Color;
+    [SerializeField] private float waitingTimeSolution = 1f;
+
     private List<Image> dotList;
     private List<int> solution;
     private List<int> input;
     private bool solutionSequence;
-    // Start is called before the first frame update
-    void Start()
+
+    // Update is called once per frame
+    public override void Update()
     {
-        //Clear end text
+        base.Update();
+    }
+
+    // Start is called before the first frame update
+    public override void StartGame()
+    {
+        base.StartGame();
+
+        //Clear +disable end text and enable basic components
         endText.text = "";
+        endText.enabled = false;
+        keypadColors.SetActive(true);
+        topColors.SetActive(true);
 
         //Create the dot list
         dotList = new List<Image>{dot1,dot2,dot3,dot4,dot5};
@@ -37,7 +52,7 @@ public class SimonSaysGameManager : MonoBehaviour
         //Set the colors of the dots
         ResetDots();
 
-        //Set the colors of the buttons
+        //Set the default colors of the buttons
         for (int j = 1; j <= 6; j++)
         {
             keypadColors.transform.GetChild(j-1).gameObject.GetComponent<Image>().color = GetColor(0);
@@ -49,15 +64,9 @@ public class SimonSaysGameManager : MonoBehaviour
         //Generate random solution
         solution = new List<int>{rc(),rc(),rc(),rc(),rc()};
 
-        
-
-        ///*Visualize the solution
+        //Visualize the solution
         solutionSequence = true;
         StartCoroutine(ShowSolution());
-        Debug.Log("AFTER SOLUTION IS SHOWN");
-        //*/
-        
-        
     }
 
     IEnumerator ShowSolution()
@@ -69,7 +78,7 @@ public class SimonSaysGameManager : MonoBehaviour
             {
                 dotList[i-1].color = GetColor(solution[i-1]);
                 keypadColors.transform.GetChild(solution[i-1]-1).gameObject.GetComponent<Image>().color = GetColor(solution[i-1]);
-                yield return new WaitForSeconds(1.5f);
+                yield return new WaitForSeconds(waitingTimeSolution);
                 dotList[i-1].color = GetColor(0);
                 keypadColors.transform.GetChild(solution[i-1]-1).gameObject.GetComponent<Image>().color = GetColor(0);
             }
@@ -138,7 +147,10 @@ public class SimonSaysGameManager : MonoBehaviour
                 keypadColors.SetActive(false);
                 topColors.SetActive(false);
                 endText.text = "Victory!";
+                endText.enabled = true;
 
+                minigameState = 1;
+                EndGame();
             }
             else
             {
@@ -146,6 +158,10 @@ public class SimonSaysGameManager : MonoBehaviour
                 keypadColors.SetActive(false);
                 topColors.SetActive(false);
                 endText.text = "Loss!";
+                endText.enabled = true;
+                
+                minigameState = 0;
+                EndGame();
             }
         }
     }
@@ -162,9 +178,8 @@ public class SimonSaysGameManager : MonoBehaviour
         return true;
     }
 
-    // Update is called once per frame
-    void Update()
+    public override void EndGame()
     {
-        
+        base.EndGame();
     }
 }
