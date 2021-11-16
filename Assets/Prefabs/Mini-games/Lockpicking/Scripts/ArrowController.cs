@@ -345,8 +345,10 @@ public class ArrowController : Minigame
 
     public void CustomEndGame(bool wincon)
     {
+        
         //Destroy all targets from level 3
         ModifyTargets(l3prefabs, true);
+        l3targets = 3;
         //Disable all basic components
         subsetGame.transform.GetChild(0).gameObject.GetComponent<Image>().enabled = false;
         subsetGame.transform.GetChild(1).gameObject.GetComponent<Image>().enabled = false;
