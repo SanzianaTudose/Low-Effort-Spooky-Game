@@ -110513,8 +110513,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 50
-  m_fontSizeBase: 50
+  m_fontSize: 40
+  m_fontSizeBase: 40
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -110707,8 +110707,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -9}
-  m_SizeDelta: {x: 685.3, y: 206.1}
+  m_AnchoredPosition: {x: -3.9077, y: 18.651}
+  m_SizeDelta: {x: 818.1672, y: 351.02}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &185725405
 MonoBehaviour:
@@ -110730,7 +110730,12 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'TIP: Use the hotkey "p" to quickly switch between the pause menu and gameplay.'
+  m_text: "You've recently become a ghost. Since it's Halloween night, you want to
+    get as many candies as possible. You can do so by possessing the people on the
+    street and then going trick-or-treating.\n\nCONTROLS: \nWASD - movement  E -
+    interact  Q - stop possesion  P - pause\n\nCREDITS:\nHochuPitsu - Pixel Bob;
+    LimeZu - Serene Village (itch.io)\npeony - Plants&Flowers (opengameart.org) \nPizzadude
+    - ArcadeClassic font (1001fonts.com)\n"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -110757,8 +110762,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 50
-  m_fontSizeBase: 50
+  m_fontSize: 27
+  m_fontSizeBase: 27
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -115160,8 +115165,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 50
-  m_fontSizeBase: 50
+  m_fontSize: 40
+  m_fontSizeBase: 40
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -125134,7 +125139,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1114656584
 RectTransform:
   m_ObjectHideFlags: 0
@@ -126149,10 +126154,10 @@ RectTransform:
   m_Father: {fileID: 894591215}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -175}
-  m_SizeDelta: {x: 210, y: 65}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -3.9077148, y: -191}
+  m_SizeDelta: {x: -689.5027, y: -426.3629}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1282608241
 MonoBehaviour:
@@ -127051,10 +127056,10 @@ RectTransform:
   m_Father: {fileID: 1790540486}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: -0.3567047}
-  m_SizeDelta: {x: 243.83, y: 68.3}
+  m_SizeDelta: {x: 47.83, y: 18.300003}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1586859455
 MonoBehaviour:
@@ -127100,7 +127105,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 702652909}
         m_TargetAssemblyTypeName: PlaytimeScript, Assembly-CSharp
         m_MethodName: RestartSession
         m_Mode: 1
@@ -127268,8 +127273,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 150}
-  m_SizeDelta: {x: 576.5, y: 114.4}
+  m_AnchoredPosition: {x: -0.000021994, y: 215.83}
+  m_SizeDelta: {x: 410.0326, y: 43.3395}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1703553780
 MonoBehaviour:
@@ -127318,8 +127323,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 70
-  m_fontSizeBase: 70
+  m_fontSize: 40
+  m_fontSizeBase: 40
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -127585,10 +127590,10 @@ RectTransform:
   m_Father: {fileID: 1282608240}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0.3567}
-  m_SizeDelta: {x: 195, y: 50}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0.3567009}
+  m_SizeDelta: {x: -15, y: -14}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1790540487
 MonoBehaviour:
@@ -127884,10 +127889,10 @@ RectTransform:
   m_Father: {fileID: 1790540486}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: -0.3567047}
-  m_SizeDelta: {x: 243.83, y: 68.3}
+  m_SizeDelta: {x: 47.83, y: 18.300003}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2051892352
 MonoBehaviour:
@@ -127933,7 +127938,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 702652909}
         m_TargetAssemblyTypeName: PlaytimeScript, Assembly-CSharp
         m_MethodName: DeactivatePauseMenu
         m_Mode: 1
