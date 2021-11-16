@@ -24,6 +24,7 @@ public class PossessionController : MonoBehaviour
     private bool cleanUp = false;
     private bool possessing = false;
     private bool needFirstHighlight = true;
+    private bool minigameRunning = false;
     private GameObject highlightClosest;
     private GameObject lastPossessed;
     private GameObject chosenDoorPopup;
@@ -159,6 +160,7 @@ public class PossessionController : MonoBehaviour
                 //Make sure we can't cheat or get time deducted while in a minigame
                 playtimescript.pauseDisabled = true;
                 playtimescript.gamePaused = true;
+                
                 //Trigger the minigame
                 TriggerMinigame();
             }
@@ -278,33 +280,49 @@ public class PossessionController : MonoBehaviour
             return;
         }
 
-
-        // Disable player movement and NPC Movement
-        GetComponent<PlayerMovement>().enabled = false;
-        highlightClosest.GetComponent<NPCMovement>().enabled = false;
-        // Set pause animation for the NPC
-        highlightClosest.GetComponent<NPCMovement>().PauseAnimation();
+        // Disable player movement, NPC movement and NPC interaction
+        StartCoroutine(ToggleMovementAndNPCInteractionAfterSeconds(0f, false));
 
         Minigame minigame = npcMinigame.minigame;
         minigameController.startIntro(minigame);
         StartCoroutine(WaitForMinigameEnd(minigame));
-
     }
 
     IEnumerator WaitForMinigameEnd(Minigame minigame) {
         while (minigameController.countdownRunning || minigame.minigameRunning)
             yield return null;
-
+        
         playtimescript.getInput = true;
 
         if (minigame.minigameState == 1) {
             StartCoroutine(StartPossessionAfterSeconds(2.5f));
+
+            // Enable player movement, NPC movement and NPC interaction after possession
+            StartCoroutine(ToggleMovementAndNPCInteractionAfterSeconds(2.5f, true));
         } else {
-            // Enable player movement and NPC Movement
-            GetComponent<PlayerMovement>().enabled = true;
-            highlightClosest.GetComponent<NPCMovement>().enabled = true;
+            // The minigame must've failed at this point in the method. Still, the minigame screen only
+            // closes after 2.5 more seconds. Only enable movement and initiation of minigames then!
+            StartCoroutine(ToggleMovementAndNPCInteractionAfterSeconds(2.5f, true));
             StartCoroutine(EnableTimerAfterSeconds(2f));
         }
+
+        minigame.minigameState = -1;
+    }
+
+    IEnumerator ToggleMovementAndNPCInteractionAfterSeconds(float sec, bool newState)
+    {
+        // Set pause animation for the NPC if the minigame is starting
+        if (!newState) highlightClosest.GetComponent<NPCMovement>().PauseAnimation();
+
+        // newState is whether or not to enable movement and interaction.
+        yield return new WaitForSeconds(sec);
+
+        // Enable/disable player movement and NPC movement
+        GetComponent<PlayerMovement>().enabled = newState;
+        highlightClosest.GetComponent<NPCMovement>().enabled = newState;
+
+        // Enable/disable the ability to initiate minigames by pressing E
+        minigameRunning = !newState;
     }
 
     IEnumerator StartPossessionAfterSeconds(float sec) {
