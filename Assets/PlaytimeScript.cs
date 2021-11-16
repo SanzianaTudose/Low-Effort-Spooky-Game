@@ -141,8 +141,8 @@ public class PlaytimeScript : MonoBehaviour
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
-    public void OnHouseInteraction() {
-        if (scoreIsUpdating) return;
+    public int OnHouseInteraction() {
+        if (scoreIsUpdating) return -1;
 
         // Determine if it's Trick or Treat
         int amount = 0;
@@ -179,6 +179,10 @@ public class PlaytimeScript : MonoBehaviour
 
         trickOrTreatAnimator.Play("TrickOrTreat");
         StartCoroutine(UpdateScoreText());
+
+        if (amount >= 0)
+            return 1;
+        return 0;
     }
 
     IEnumerator UpdateScoreText() {
