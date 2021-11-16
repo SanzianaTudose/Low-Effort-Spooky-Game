@@ -153,11 +153,13 @@ MonoBehaviour:
   countdown: {fileID: 507181863830296924}
   lives: {fileID: 206128534922716620}
   roundinfo: {fileID: 507181864011837308}
+  bottomText: {fileID: 8407989858208060024}
   prefabBig: {fileID: 2512550546671326295, guid: 14e0b4a716ad6f646b8aa0167a3ff64c, type: 3}
   prefabMedium: {fileID: 8933035066482296733, guid: 326bb37009715dd49bf17a9625aab688, type: 3}
   prefabSmall: {fileID: 3139264579577552308, guid: 5a1a8b41ef5c23d4f9cf548bfa5e5d18, type: 3}
   overlayPanelLocal: {fileID: 0}
   gameContainer: {fileID: 8407989858906989472}
+  startGameWithLevel: 3
   degreesPerSecond: 75
   rgbSpeed: 0.1
 --- !u!61 &507181862735531416

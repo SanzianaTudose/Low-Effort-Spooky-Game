@@ -94,7 +94,7 @@ public class PlaytimeScript : MonoBehaviour
     private string GenerateClockText(int time)
     {
         //Deal with time outside our capacity
-        if (time < 0 || time > 3599) { return $"--:--"; }
+        if (time < 0 || time > 3599) { return $"-:-"; }
         //Calculate the left and right hand side
         int seconds = time % 60;
         int minutes = (time - seconds) / 60;

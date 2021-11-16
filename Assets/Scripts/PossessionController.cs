@@ -12,6 +12,7 @@ public class PossessionController : MonoBehaviour
     [SerializeField] GameObject prefabDoorPopup;
     [SerializeField] GameObject gridFolder;
     [SerializeField] PlaytimeScript playtimescript;
+    Dictionary<string,List<Vector3>> visitedPlaces = new Dictionary<string, List<Vector3>>();
     List<GameObject> objectsWithinRange = new List<GameObject>();
 
     public GameObject spawner;
@@ -23,16 +24,70 @@ public class PossessionController : MonoBehaviour
     private bool cleanUp = false;
     private bool possessing = false;
     private bool needFirstHighlight = true;
+    private bool minigameRunning = false;
     private GameObject highlightClosest;
     private GameObject lastPossessed;
     private GameObject chosenDoorPopup;
-
     private bool spawnedAgain = false;
+    private Vector3 closestTilePos = new Vector3();
 
     // Start is called before the first frame update
     void Start()
     {
         
+    }
+
+    private void AddLocation(string npcKey, Vector3 location)
+    {
+        //Check if key already exists within the dictionary
+        if (!visitedPlaces.ContainsKey(npcKey))
+        {
+            Debug.Log($"New entry created for {npcKey}");
+            var locations = new List<Vector3>();
+            locations.Add(location);
+            visitedPlaces.Add(npcKey, locations);
+        }
+        else
+        {
+            //Only add the location if it does not already exist within the npc's location list
+            var locations = visitedPlaces[npcKey];
+            if (!locations.Contains(location))
+            {
+                Debug.Log($"Adding a location to {npcKey}");
+                locations.Add(location);
+                //Override previous locations list
+                visitedPlaces[npcKey] = locations;
+            }
+            else
+            {
+                Debug.Log($"Duplicate location!");
+            }
+            
+        }
+
+    }
+
+    private void ShowVisitedLocations()
+    {
+        foreach(var key in visitedPlaces.Keys)
+        {
+            foreach (var loc in visitedPlaces[key])
+            {
+                Debug.Log($"{key} visited -> {loc}");
+            }
+        }
+    }
+
+    private bool AlreadyVisited(string npcKey, Vector3 location)
+    {
+        if (visitedPlaces.ContainsKey(npcKey))
+        {
+            if (visitedPlaces[npcKey].Contains(location))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     // Update is called once per frame
@@ -96,11 +151,15 @@ public class PossessionController : MonoBehaviour
                 highlightClosest = GetClosestTarget(objectsWithinRange);
             }
 
-            if (Input.GetKeyDown("e") && !possessing)
+            if (Input.GetKeyDown("e") && !possessing && !minigameRunning)
             {
+                Debug.Log(highlightClosest.name);
+                //Let the script know we are in a minigame
+                minigameRunning = true;
                 //Make sure we can't cheat or get time deducted while in a minigame
                 playtimescript.pauseDisabled = true;
                 playtimescript.gamePaused = true;
+                
                 //Trigger the minigame
                 TriggerMinigame();
             }
@@ -182,44 +241,66 @@ public class PossessionController : MonoBehaviour
 
         NPCMinigame npcMinigame = highlightClosest.GetComponent<NPCMinigame>();
         if (npcMinigame == null || npcMinigame.minigame == null) { // NPC doesn't have an NPCMinigame component or minigame at all
+            //Let the script know we aren't in a minigame
+            minigameRunning = false;
+            //Resume timer and pause menu capabilities
+            playtimescript.pauseDisabled = false;
+            playtimescript.gamePaused = false;
             StartPossession(); // just posses without any minigame
             return;
         }
 
-
-        // Disable player movement and NPC Movement
-        GetComponent<PlayerMovement>().enabled = false;
-        highlightClosest.GetComponent<NPCMovement>().enabled = false;
-        // Set pause animation for the NPC
-        highlightClosest.GetComponent<NPCMovement>().PauseAnimation();
+        // Disable player movement, NPC movement and NPC interaction
+        StartCoroutine(ToggleMovementAndNPCInteractionAfterSeconds(0f, false));
 
         Minigame minigame = npcMinigame.minigame;
         minigameController.startIntro(minigame);
         StartCoroutine(WaitForMinigameEnd(minigame));
-
     }
 
     IEnumerator WaitForMinigameEnd(Minigame minigame) {
         while (minigameController.countdownRunning || minigame.minigameRunning)
             yield return null;
-
+        
         playtimescript.getInput = true;
 
         if (minigame.minigameState == 1) {
             StartCoroutine(StartPossessionAfterSeconds(2.5f));
+
+            // Enable player movement, NPC movement and NPC interaction after possession
+            StartCoroutine(ToggleMovementAndNPCInteractionAfterSeconds(2.5f, true));
         } else {
-            // Enable player movement and NPC Movement
-            GetComponent<PlayerMovement>().enabled = true;
-            highlightClosest.GetComponent<NPCMovement>().enabled = true;
+            // The minigame must've failed at this point in the method. Still, the minigame screen only
+            // closes after 2.5 more seconds. Only enable movement and initiation of minigames then!
+            StartCoroutine(ToggleMovementAndNPCInteractionAfterSeconds(2.5f, true));
             StartCoroutine(EnableTimerAfterSeconds(2f));
         }
+
+        minigame.minigameState = -1;
+    }
+
+    IEnumerator ToggleMovementAndNPCInteractionAfterSeconds(float sec, bool newState)
+    {
+        // Set pause animation for the NPC if the minigame is starting
+        if (!newState) highlightClosest.GetComponent<NPCMovement>().PauseAnimation();
+
+        // newState is whether or not to enable movement and interaction.
+        yield return new WaitForSeconds(sec);
+
+        // Enable/disable player movement and NPC movement
+        GetComponent<PlayerMovement>().enabled = newState;
+        highlightClosest.GetComponent<NPCMovement>().enabled = newState;
+
+        // Enable/disable the ability to initiate minigames by pressing E
+        minigameRunning = !newState;
     }
 
     IEnumerator StartPossessionAfterSeconds(float sec) {
         yield return new WaitForSeconds(sec);
         // Enable player movement
         GetComponent<PlayerMovement>().enabled = true;
-
+        //Let the script know we aren't in a minigame
+        minigameRunning = false;
         StartPossession();
         //Enable pause and timer again
         playtimescript.pauseDisabled = false;
@@ -228,6 +309,8 @@ public class PossessionController : MonoBehaviour
 
     IEnumerator EnableTimerAfterSeconds(float sec) {
         yield return new WaitForSeconds(sec);
+        //Let the script know we aren't in a minigame
+        minigameRunning = false;
         // Enable pause and timer again
         playtimescript.pauseDisabled = false;
         playtimescript.gamePaused = false;
@@ -306,7 +389,7 @@ public class PossessionController : MonoBehaviour
 
                 bool firstTileSeen = false;
                 float closestDistance = 100000;
-                Vector3 closestTilePos = new Vector3();
+                closestTilePos = new Vector3();
 
                 //Figure out the closest Tile Position
                 foreach (var position in tilemap.cellBounds.allPositionsWithin)
