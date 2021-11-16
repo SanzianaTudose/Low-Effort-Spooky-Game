@@ -27,6 +27,12 @@ public class PossessionController : MonoBehaviour
     private bool minigameRunning = false;
     private GameObject highlightClosest;
     private GameObject lastPossessed;
+    private Animator bobAnimator;
+    private Animator ghostAnimator;
+    private Animator temp;
+    public ParticleSystem possession;
+
+
     private GameObject chosenDoorPopup;
     private bool spawnedAgain = false;
     private Vector3 closestTilePos = new Vector3();
@@ -34,7 +40,7 @@ public class PossessionController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        ghostAnimator = this.GetComponent<Animator>();
     }
 
     private void AddLocation(string npcKey, Vector3 location)
@@ -169,6 +175,7 @@ public class PossessionController : MonoBehaviour
         //Escape the current possession
         if (Input.GetKeyDown("q") && possessing)
         {
+            StopParticles();
             spawnedAgain = false;
             /*
             1. Set possessing to false
@@ -199,6 +206,9 @@ public class PossessionController : MonoBehaviour
                 }
             }
 
+            //return to the ghost its animator
+            ghostAnimator.runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>("Player");
+
             possessing = false;
 
             // change the position to a random place
@@ -213,7 +223,6 @@ public class PossessionController : MonoBehaviour
             gameObject.GetComponent<SpriteRenderer>().sprite = defaultSprite;
 
 
-            
             if (ableToPosses) {
                 highlightClosest.transform.GetChild(0).GetComponent<SpriteRenderer>().enabled = true;
             }
@@ -340,12 +349,35 @@ public class PossessionController : MonoBehaviour
 
         possessing = true;
 
-        gameObject.GetComponent<SpriteRenderer>().enabled = false;
+        //gameObject.GetComponent<SpriteRenderer>().enabled = false;
 
         //highlightClosest.GetComponent<NPCMovement>().enabled = false;
 
         highlightClosest.GetComponent<BoxCollider2D>().enabled = false;
+
+        highlightClosest.GetComponent<SpriteRenderer>().enabled = false;
+
         gameObject.transform.position = highlightClosest.gameObject.transform.position;
+
+
+
+        bobAnimator = highlightClosest.GetComponent<Animator>();
+
+        CreateParticles();
+
+
+        //temp = this.GetComponent<Animator>();
+        //temp.runtimeAnimatorController = ghostAnimator.runtimeAnimatorController;
+
+
+        //ghostAnimator = this.GetComponent<Animator>();
+
+        //ghostAnimator.runtimeAnimatorController = bobAnimator.runtimeAnimatorController;
+
+        string npcName = highlightClosest.name;
+        string dir = string.Format("NPC Animations/{0}/{0}Animator",npcName);
+        ghostAnimator.runtimeAnimatorController = Resources.Load<RuntimeAnimatorController>(dir);
+
 
         /*
         This is a temporary solution!
@@ -353,11 +385,12 @@ public class PossessionController : MonoBehaviour
         is making use of a switch case based on a property of the target
         for example: public int variable.
         */
-        gameObject.GetComponent<SpriteRenderer>().sprite = possessedSprite;
+        //possessedSprite = highlightClosest.GetComponent<SpriteRenderer>().sprite;
 
-        highlightClosest.GetComponent<SpriteRenderer>().enabled = false;
+        //gameObject.GetComponent<SpriteRenderer>().sprite = possessedSprite;
 
-        gameObject.GetComponent<SpriteRenderer>().enabled = true;
+
+        //gameObject.GetComponent<SpriteRenderer>().enabled = true;
 
         highlightClosest.transform.GetChild(0).GetComponent<SpriteRenderer>().enabled = false;
 
@@ -481,5 +514,15 @@ public class PossessionController : MonoBehaviour
             }
         }
         return tMin;
+    }
+
+    void CreateParticles()
+    {
+        possession.Play();
+    }
+
+    void StopParticles()
+    {
+        possession.Stop();
     }
 }
